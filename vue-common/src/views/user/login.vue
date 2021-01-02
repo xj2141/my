@@ -44,13 +44,13 @@
             <el-form-item prop="vcode">
               <el-row :span="24">
                 <el-col :span="14">
-              <el-input name="vcode" type="text" v-model="loginForm.vcode"
-                        placeholder="请输入验证码"></el-input>
+                  <el-input name="vcode" type="text" v-model="loginForm.vcode"
+                            placeholder="请输入验证码"></el-input>
                 </el-col>
                 <el-col :span="4">
-              <div @click="createCode">
-                <s-identify :identifyCode="identifyCode"></s-identify>
-              </div>
+                  <div @click="createCode">
+                    <s-identify :identifyCode="identifyCode"></s-identify>
+                  </div>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -145,7 +145,7 @@ export default {
               sessionStorage.setItem('token', 'true');
               sessionStorage.setItem('username', this.loginForm.username);
               this.$router.push({
-                path: '/IPSS'
+                path: '/'
               });
             } else {
               this.$message.error('用户名或密码错误');
@@ -193,7 +193,7 @@ export default {
 .card {
   width: 300px;
   height: 350px;
-  margin-top: calc(calc(100vh - 350px) / 2);  /** 竖直动态居中 */
+  margin-top: calc(calc(100vh - 350px) / 2); /** 竖直动态居中 */
   margin-left: calc(calc(100vw - 300px) / 2); /** 动态居中 */
   background-color: rgba(200, 200, 200, 0.3); /** rgba中的a为alpha通道，为不透明参数，0即为完全透明 */
   border-color: rgba(200, 200, 200, 0.3);

@@ -131,7 +131,7 @@ export default {
             if (status == "success") {
               this.$message.success('注册成功');
               this.$router.push({
-                path: "/"
+                path: "/login"
               });
             } else {
               this.$message.error('用户名已存在');
@@ -147,7 +147,7 @@ export default {
     },
     handleBack() {
       this.$router.push({
-        path: "/"
+        path: "/login"
       });
     }
   }

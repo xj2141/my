@@ -3,7 +3,7 @@
     <div class="title1">生命质量量表(SF-36)</div>
     <div class="title2">
       <span>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SF-36量表，又叫健康调查简表，是美国医学局研究组(Medical Outcomes Study，MOS)开发的一个普适性测定量表。该工作开始于80年代初期，形成了不同条目不同语言背景的多种版本。1990~1992年，含有36个条目的健康调查问卷简化版SF-36的不同语种版本相继问世。其中用得较多的是英国发展版、美国标准版和中文版，均包含躯体功能、躯体角色(role-physicaI)、肌体疼痛、总的健康状况、活力(vitality)、社会功能、情绪角色(role-emotional)和心理卫生等8个领域。
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SF-36量表，又叫健康调查简表，是美国医学局研究组(Medical Outcomes Study，MOS)开发的一个普适性测定量表。该工作开始于80年代初期，形成了不同条目不同语言背景的多种版本。1990~1992年，含有36个条目的健康调查问卷简化版SF-36的不同语种版本相继问世，其中用得较多的是英国发展版、美国标准版和中文版，均包含躯体功能、躯体角色(role-physicaI)、肌体疼痛、总的健康状况、活力(vitality)、社会功能、情绪角色(role-emotional)和心理卫生等8个领域。
       </span>
     </div>
     <div class="all">
@@ -120,8 +120,8 @@
             <input type="radio" v-model="question.q21" :value="item.value"/>{{ item.label }}<br/>
           </label>
         </el-form-item>
-        <el-form-item label="题目8.在过去4个星期里，您的身体疼痛影响了您的工作和家务吗？" v-show="eight">
-          <label v-for="(item, index) in sixths" :key="index">
+        <el-form-item label="题目8.在过去4个星期里，您的身体疼痛影响了您的工作和家务吗？" prop="q22">
+          <label v-for="(item, index) in eighths" :key="index">
             <input type="radio" v-model="question.q22" :value="item.value"/>{{ item.label }}<br/>
           </label>
         </el-form-item>
@@ -329,23 +329,23 @@ export default {
       ],
       sixths: [
         {
-          value: 5,
+          value: 6,
           label: '完全没有影响'
         },
         {
-          value: 4,
+          value: 5,
           label: '有一点影响'
         },
         {
-          value: 3,
+          value: 4,
           label: '中等影响'
         },
         {
-          value: 2,
+          value: 3,
           label: '影响很大'
         },
         {
-          value: 1,
+          value: 2,
           label: '影响非常大'
         }
       ],
@@ -373,6 +373,28 @@ export default {
         {
           value: 1,
           label: '很严重疼痛'
+        }
+      ],
+      eighths: [
+        {
+          value: 5,
+          label: '完全没有影响'
+        },
+        {
+          value: 4,
+          label: '有一点影响'
+        },
+        {
+          value: 3,
+          label: '中等影响'
+        },
+        {
+          value: 2,
+          label: '影响很大'
+        },
+        {
+          value: 1,
+          label: '影响非常大'
         }
       ],
       fninths: [
@@ -587,32 +609,88 @@ export default {
         evaluateName: '',
         score: '',
         conclusion: ''
-      },
-      eight:true
+      }
     }
   },
-  watch:{
-    question: {  // 这监听对象值的改变 和上面的不一样。
-      handler(curVal,oldVal){
-        let now=curVal.q21;
-        if(now=='6'){
-          this.eight=false;
-        }else{
-          this.eight=true;
-        }
-      },
-      deep: true,
-    },
-  },
+  // watch: {
+  //   question: {  // 监听对象值的改变
+  //     handler(curVal,oldVal){
+  //       let re=Number(curVal.q1).toFixed(1);
+  //       console.log(this.getTwo(re/3));
+  //     },
+  //     deep: true,
+  //   },
+  // },
   methods: {
-    sum() {
-      let sum = 0;
-      for (let key in this.question) {
-        if (this.question[key] != '')
-          sum += Number(this.question[key]);
+    getTwo(val) {
+      val = Math.round(val * 100) / 100
+      var xsd = val.toString().split('.')
+      if (xsd.length === 1) {
+        val = val.toString() + '.00'
+        return val
       }
-      console.log(sum);
-      return sum;
+      if (xsd.length > 1) {
+        if (xsd[1].length < 2) {
+          val = val.toString() + '0'
+        }
+        return val
+      }
+    },
+    sum() {
+      let pf = 0;
+      let rp = 0;
+      let bp = 0;
+      let gh = 0;
+      let vt = 0;
+      let sf = 0;
+      let re = 0;
+      let mh = 0;
+      let ht = 0;
+      var values=Object.values(this.question);
+      let newValues = values.some( (item,i) =>{
+        let key=i+1;
+        if (key >= 3 && key <= 12) {
+          pf += Number(item);
+        } else if (key >= 13 && key <= 16) {
+          rp += Number(item);
+        } else if (key == 21 || key == 22) {
+          bp += Number(item);
+        } else if (key == 1 || (key >= 33 && key <= 36)) {
+          gh += Number(item);
+        } else if (key == 23 || key == 27 || key == 29 || key == 31) {
+          vt += Number(item);
+        } else if (key == 20 || key == 32) {
+          sf += Number(item);
+        } else if (key >= 17 && key <= 19) {
+          re += Number(item);
+        } else if (key == 28 || key == 30 || (key >= 24 && key <= 26)) {
+          mh += Number(item);
+        } else if (key == 2) {
+          ht += Number(item);
+        }
+      });
+      if (this.question.q21 == 6 && this.question.q22 == 5) bp += 1;
+      console.log(pf+" "+rp+" "+bp+" "+gh+" "+vt+" "+sf+" "+re+" "+mh+" "+ht+" ");
+      pf = (pf - 10) / 20;
+      rp = (rp - 4) / 4;
+      bp = (bp - 2) / 10;
+      gh = (gh - 5) / 20;
+      vt = (vt - 4) / 20;
+      sf = (sf - 3) / 9;
+      re = (re - 3) / 3;
+      mh = (mh - 5) / 25;
+      ht = (ht - 1) / 4;
+      let result = '';
+      result += "①生理机能PF=" + this.getTwo(pf);
+      result += "②生理职能RP=" + this.getTwo(rp);
+      result += "③躯体疼痛BP=" + this.getTwo(bp);
+      result += "④一般健康状况GH=" + this.getTwo(gh);
+      result += "⑤精力VT=" + this.getTwo(vt);
+      result += "⑥社会功能SF=" + this.getTwo(sf);
+      result += "⑦情感职能RE=" + this.getTwo(re);
+      result += "⑧精神健康MH=" + this.getTwo(mh);
+      result += "⑨健康变化HT=" + this.getTwo(ht);
+      return result;
     },
     getDate() {
       let nowDate = new Date();
@@ -657,7 +735,8 @@ export default {
           this.evaluateForm.evaluateName = '生命质量量表(SF-36)';
           let result = this.sum();
           this.evaluateForm.score = result;
-          let message = '得分越高，提示生命质量越好';
+
+          let message = '九项评价指标满分均为1，得分越高，提示健康状况越好';
           this.evaluateForm.conclusion = message;
           this.dialogVisible = true;
           this.clear();
@@ -703,6 +782,7 @@ export default {
   font-size: 28px;
   color: rgba(20, 20, 20, 1);
 }
+
 .title2 {
   width: 750px;
   margin-top: 2%;

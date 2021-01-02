@@ -21,7 +21,7 @@
         select * from evaluate
         where evaluateName like concat(concat('%',#{evaluateName}),'%')
         order by evaluateId asc
-        limit #{startRows},2
+        limit #{startRows},#{pageSize}
     </select>
 
     <select id="getRowCount" resultType="Integer">

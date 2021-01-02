@@ -17,8 +17,8 @@ public class EvaluateService {
         return evaluateDao.findByEvaluate(evaluate);
     }
 
-    public List<Evaluate> queryPage(Integer startRows, String evaluateName){
-        return evaluateDao.queryPage(startRows,evaluateName);
+    public List<Evaluate> queryPage(Integer pageSize, Integer startRows, String evaluateName){
+        return evaluateDao.queryPage(pageSize,startRows,evaluateName);
     }
 
     public int getRowCount(String evaluateName){

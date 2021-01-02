@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="one">
     <el-form :inline="true" class="demo-form-inline" size="mini">
       <el-form-item>
         <el-select v-model="search" class="search_name" placeholder="请选择量表名称">
@@ -13,6 +14,7 @@
         <el-button type="primary" class="el-icon-delete" @click="removeBatch()">批量删除</el-button>
       </el-form-item>
     </el-form>
+    </div>
 
     <el-table :data="tableData" highlight-current-row border style="width: 100%" @selection-change="handleSelectionChange" ref="table">
       <el-table-column type="selection"></el-table-column>
@@ -45,12 +47,12 @@
 
     <div class="pages">
       <el-pagination
-        background
         :current-page.sync="currentPage"
-        small
-        layout="prev, pager, next"
-        :page-size="pageSize"
+        layout="total,sizes,prev,pager,next,jumper"
+        :page-sizes="[2, 10, 30, 50, 100]"
+        :page-size.sync="pageSize"
         :total="total"
+        @size-change="handleSizeChange"
         @current-change="handleCurrentChange">
       </el-pagination>
     </div>
@@ -185,10 +187,15 @@ export default{
         console.log(error);
       });
     },
+    handleSizeChange(){
+      this.currentPage=1;
+      this.handleCurrentChange();
+    },
     handleCurrentChange() {
       console.log(`当前页: ${this.currentPage}`);
       let postData = this.qs.stringify({
         page: this.currentPage,
+        pageSize:this.pageSize,
         evaluateName:this.search,
         click:this.click
       });
@@ -217,12 +224,14 @@ export default{
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.one{
+  margin-top: 2%;
+}
 .search_name{
   width:210px;
 }
 .pages{
-  margin: 0px;
-  padding: 0px;
-  text-align: right;
+  margin-top: 2%;
+  text-align: center;
 }
 </style>

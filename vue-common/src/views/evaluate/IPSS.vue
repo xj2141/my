@@ -262,7 +262,7 @@ export default {
 .title1 {
   text-align: center;
   margin-top: 3%;
-  margin-left: 39px;
+  margin-left: 25px;
   font-size: 28px;
   color: rgba(20, 20, 20, 1);
 }

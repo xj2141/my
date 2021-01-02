@@ -6,7 +6,7 @@ Vue.use(Router)
 const constantRouterMap=[
   {
     //登录
-    path:'/',
+    path:'/login',
     name:'login',
     component:()=>import('@/views/user/login')
   },
@@ -17,67 +17,78 @@ const constantRouterMap=[
     component:()=>import('@/views/user/regist')
   },
   {
-    //首页
-    path:'/home',
+    path:'/',
     name:'home',
     meta: {
       requireAuth: true
     },
-    component:()=>import('@/views/home')
-  },
-  {
-    //个人信息
-    path:'/userInfo',
-    name:'userInfo',
-    meta: {
-      requireAuth: true
-    },
-    component:()=>import('@/views/user/userInfo')
-  },
-  {
-    //修改密码
-    path:'/changePwd',
-    name:'changePwd',
-    meta: {
-      requireAuth: true
-    },
-    component:()=>import('@/views/user/changePwd')
-  },
-  {
-    //量表历史记录
-    path:'/evaluate',
-    name:'evaluate',
-    meta: {
-      requireAuth: true
-    },
-    component:()=>import('@/views/evaluate/evaluate')
-  },
-  {
-    //量表
-    path:'/IPSS',
-    name:'IPSS',
-    meta: {
-      requireAuth: true
-    },
-    component:()=>import('@/views/evaluate/IPSS')
-  },
-  {
-    //量表
-    path:'/OABSS',
-    name:'OABSS',
-    meta: {
-      requireAuth: true
-    },
-    component:()=>import('@/views/evaluate/OABSS')
-  },
-  {
-    //量表
-    path:'/SF-36',
-    name:'SF-36',
-    meta: {
-      requireAuth: true
-    },
-    component:()=>import('@/views/evaluate/SF-36')
+    redirect:'index',
+    component:()=>import('@/views/home'),
+    children:[
+      {
+        //首页
+        path:'index',
+        name:'首页',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/index')
+      },
+      {
+        //量表历史记录
+        path:'evaluate',
+        name:'历史记录',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/evaluate/evaluate')
+      },
+      {
+        //量表
+        path:'IPSS',
+        name:'IPSS',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/evaluate/IPSS')
+      },
+      {
+        //量表
+        path:'OABSS',
+        name:'OABSS',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/evaluate/OABSS')
+      },
+      {
+        //量表
+        path:'SF-36',
+        name:'SF-36',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/evaluate/SF-36')
+      },
+      {
+        //个人信息
+        path:'/userInfo',
+        name:'个人信息',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/user/userInfo')
+      },
+      {
+        //修改密码
+        path:'/changePwd',
+        name:'修改密码',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/user/changePwd')
+      }
+    ]
   }
 ]
 
@@ -93,7 +104,7 @@ router.beforeEach((to, from, next) => {
     } else {
       // 未登录,跳转到登陆页面
       next({
-        path: '/'
+        path: '/login'
       })
     }
   } else {

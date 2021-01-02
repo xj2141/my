@@ -244,19 +244,19 @@ export default {
 .title1 {
   text-align: center;
   margin-top: 3%;
-  margin-left: 40px;
+  margin-left: 21px;
   font-size: 28px;
   color: rgba(20, 20, 20, 1);
 }
 .title2 {
-  width:700px;
+  width:600px;
   margin-top: 2%;
-  margin-left: calc(calc(100vw - 700px) / 2); /** 动态居中 */
+  margin-left: calc(calc(100vw - 600px) / 2); /** 动态居中 */
   font-size: 16px;
   color: rgba(20, 20, 20, 1);
 }
 .all{
-  width:700px;
-  margin-left: calc(calc(100vw - 700px) / 2); /** 动态居中 */
+  width:600px;
+  margin-left: calc(calc(100vw - 600px) / 2); /** 动态居中 */
 }
 </style>

@@ -11,7 +11,7 @@ public interface EvaluateDao {
 
     public Evaluate findByEvaluate(Evaluate evaluate);
 
-    public List<Evaluate> queryPage(@Param("startRows")Integer startRows, @Param("evaluateName") String evaluateName);
+    public List<Evaluate> queryPage(@Param("pageSize")Integer pageSize, @Param("startRows")Integer startRows, @Param("evaluateName") String evaluateName);
 
     public int getRowCount(String evaluateName);
 
