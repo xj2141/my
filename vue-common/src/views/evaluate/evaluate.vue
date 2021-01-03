@@ -90,16 +90,16 @@ export default{
       },
       tableData: [],
       search:'',
+      nowSearch:'',
       multipleSelection:[],
       pageSize: 2,
       currentPage: 1,
-      total: 0,
-      click:'no'
+      total: 0
     }
   },
   methods:{
     handleSearch(){
-      this.click='yes';
+      this.nowSearch=this.search;
       this.getRows();
       this.currentPage=1;
       this.handleCurrentChange();
@@ -172,8 +172,7 @@ export default{
     },
     getRows() {
       let postData = this.qs.stringify({
-        evaluateName:this.search,
-        click:this.click
+        evaluateName:this.nowSearch
       });
       this.axios({
         method: 'post',
@@ -196,8 +195,7 @@ export default{
       let postData = this.qs.stringify({
         page: this.currentPage,
         pageSize:this.pageSize,
-        evaluateName:this.search,
-        click:this.click
+        evaluateName:this.nowSearch
       });
       this.axios({
         method: 'post',
@@ -213,8 +211,7 @@ export default{
     }
   },
   created(){
-    this.click='no';
-    this.search='';
+    this.nowSearch='';
     this.getRows();
     this.currentPage=1;
     this.handleCurrentChange();
@@ -225,7 +222,7 @@ export default{
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .one{
-  margin-top: 2%;
+  margin-top: 1%;
 }
 .search_name{
   width:210px;

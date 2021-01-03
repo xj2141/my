@@ -777,8 +777,7 @@ export default {
 <style scoped>
 .title1 {
   text-align: center;
-  margin-top: 3%;
-  margin-left: 39px;
+  margin-top: 1%;
   font-size: 28px;
   color: rgba(20, 20, 20, 1);
 }
@@ -786,13 +785,13 @@ export default {
 .title2 {
   width: 750px;
   margin-top: 2%;
-  margin-left: calc(calc(100vw - 750px) / 2);
+  margin-left: calc(calc(100vw - 1010px) / 2);
   font-size: 16px;
   color: rgba(20, 20, 20, 1);
 }
 
 .all {
   width: 750px;
-  margin-left: calc(calc(100vw - 750px) / 2); /** 动态居中 */
+  margin-left: calc(calc(100vw - 1010px) / 2); /** 动态居中 */
 }
 </style>

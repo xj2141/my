@@ -17,18 +17,16 @@ public class EvaluateController {
 
     @RequestMapping(value = "/page", method = RequestMethod.POST)
     @ResponseBody
-    public List<Evaluate> page(Integer page,Integer pageSize,String evaluateName,String click){
+    public List<Evaluate> page(Integer page,Integer pageSize,String evaluateName){
         int pageNow = page == null ? 1 : page;
         int startRows = pageSize*(pageNow-1);
-        if(click=="no")evaluateName="";
         List<Evaluate> list= evaluateService.queryPage(pageSize,startRows,evaluateName);
         return list;
     }
 
     @RequestMapping(value = "/rows", method = RequestMethod.POST)
     @ResponseBody
-    public int rows(String evaluateName,String click){
-        if(click=="no")evaluateName="";
+    public int rows(String evaluateName){
         int re=evaluateService.getRowCount(evaluateName);
         return re;
     }

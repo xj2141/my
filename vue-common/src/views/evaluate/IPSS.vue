@@ -261,27 +261,26 @@ export default {
 <style scoped>
 .title1 {
   text-align: center;
-  margin-top: 3%;
-  margin-left: 25px;
+  margin-top: 1%;
   font-size: 28px;
   color: rgba(20, 20, 20, 1);
 }
 .title2 {
   width:600px;
   margin-top: 2%;
-  margin-left: calc(calc(100vw - 600px) / 2); /** 动态居中 */
+  margin-left: calc(calc(100vw - 860px) / 2); /** 动态居中 */
   font-size: 16px;
   color: rgba(20, 20, 20, 1);
 }
 .title3 {
   width:600px;
-  margin-left: calc(calc(100vw - 600px) / 2); /** 动态居中 */
+  margin-left: calc(calc(100vw - 860px) / 2); /** 动态居中 */
   font-size: 15px;
   color: rgba(20, 20, 20, 1);
 }
 .all{
   width:600px;
   margin-top: 1%;
-  margin-left: calc(calc(100vw - 600px) / 2); /** 动态居中 */
+  margin-left: calc(calc(100vw - 860px) / 2); /** 动态居中 */
 }
 </style>

@@ -1,40 +1,40 @@
 <template>
-  <div style="position: fixed">
-  <el-container style="height: 600px; border: 1px solid #eee">
+    <el-container>
+      <el-header height="40px">
+        <Header></Header>
+      </el-header>
+      <el-container>
         <!-- 左侧导航栏 -->
-        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+        <el-aside width="200px">
           <Menu></Menu>
         </el-aside>
-    <el-container>
-      <el-header style="text-align: right; font-size: 12px">
-          <Header></Header>
-        <!-- 此处放置el-tabs代码 -->
-        <div class="tab">
-          <el-tabs
-            v-model="activeIndex"
-            type="card"
-            closable
-            @tab-click='tabClick'
-            @tab-remove='tabRemove'>
-            <el-tab-pane
-              v-for="item of openTab"
-              v-if="openTab.length"
-              :key="item.name"
-              :label="item.name"
-              :name="item.route">
-            </el-tab-pane>
-          </el-tabs>
-        </div>
-      </el-header>
-        <!-- 内容区 -->
-        <el-main>
-          <div>
-            <router-view/>
-          </div>
-        </el-main>
-    </el-container>
-  </el-container>
-  </div>
+          <!-- 内容区 -->
+          <el-main>
+            <!-- 此处放置el-tabs代码 -->
+            <div class="tab">
+              <el-tabs
+                v-model="activeIndex"
+                type="border-card"
+                style="height: 38px"
+                closable
+                @tab-click='tabClick'
+                @tab-remove='tabRemove'>
+                <el-tab-pane
+                  v-for="item of openTab"
+                  v-if="openTab.length"
+                  :key="item.name"
+                  :label="item.name"
+                  :name="item.route">
+                </el-tab-pane>
+              </el-tabs>
+              <canvas id="mycanvas" width="1200" height="0"></canvas>
+            </div>
+            <div>
+              <router-view/>
+            </div>
+          </el-main>
+        </el-container>
+      </el-container>
 </template>
 
 <script>
@@ -69,9 +69,20 @@ export default {
           this.$router.push({path: this.activeIndex});
         }
       }
+    },
+    doDraw(){
+      //  获取canvas
+      let canvas = document.getElementById("mycanvas")
+      let context = canvas.getContext('2d')
+      context.moveTo(0,0)
+      context.lineTo(1200,0)
+      context.strokeStyle = "#09c3f8"
+      context.lineWidth = 0;
+      context.stroke()
     }
   },
   mounted () {
+    this.doDraw();
     // 刷新时以当前路由做为tab加入tabs
     // 当前路由不是首页时，添加首页以及另一页到store里，并设置激活状态
     // 当当前路由是首页时，添加首页到store，并设置激活状态
@@ -111,20 +122,38 @@ export default {
         this.$store.commit('set_active_index', to.path);
       }
     }
+  },
+  destroyed() {
+    window.removeEventListener('scroll',this.getScrollPosition,false);
   }
 }
 </script>
 <style scoped>
 .el-header {
-  width: 1147px;
-  height:30px;
-  background-color: #B3C0D1;
+  background-color: #333;
   color: #333;
+  position: fixed;
+  width: 100%;
+  left: 0;
+  top: 0;
 }
 .el-aside {
   color: #333;
+  position: fixed;
+  height: 100%;
+  left: 0;
+  top: 40px;
+}
+.el-main{
+  position: absolute;
+  left: 200px;
+  right: 0;
+  top: 80px;
+  bottom: 0;
 }
 .tab{
-  margin-top: 2%;
+  position: fixed;
+  left: 200px;
+  top: 40px;
 }
 </style>

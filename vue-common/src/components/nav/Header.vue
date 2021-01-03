@@ -1,7 +1,8 @@
 <template>
   <div class="header">
+    <span style="position: absolute;left:15px;top:9px;color: white">尿流监测系统</span>
     <el-dropdown @command="handleCommand">
-  <span class="el-dropdown-link">
+  <span class="el-dropdown-link" style="color: white">
     {{ username }}<i class="el-icon-arrow-down el-icon--right"></i>
   </span>
       <el-dropdown-menu slot="dropdown">
@@ -43,6 +44,7 @@ export default {
 
 <style scoped>
 .header {
-  margin-top: 2%;
+  margin-top: 10px;
+  text-align: right;
 }
 </style>
