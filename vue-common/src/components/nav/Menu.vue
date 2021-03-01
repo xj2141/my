@@ -34,7 +34,7 @@ export default {
         {
           //一级
           entity: {
-            id: 1,
+            id: 4,
             icon: "el-icon-news",
             name: "量表"
           },
@@ -42,7 +42,7 @@ export default {
           childs: [
             {
               entity: {
-                id: 2,
+                id: 40,
                 icon: "el-icon-phone-outline\r\n",
                 name: "历史记录",
                 value: "/evaluate"
@@ -50,7 +50,7 @@ export default {
             },
             {
               entity: {
-                id: 3,
+                id: 41,
                 icon: "el-icon-phone-outline\r\n",
                 name: "评测",
                 value: ""
@@ -59,7 +59,7 @@ export default {
               childs: [
                 {
                   entity: {
-                    id: 14,
+                    id: 42,
                     icon: "el-icon-service\r\n",
                     name: "IPSS",
                     value: "/IPSS"
@@ -67,7 +67,7 @@ export default {
                 },
                 {
                   entity: {
-                    id: 15,
+                    id: 43,
                     icon: "el-icon-service\r\n",
                     name: "OABSS",
                     value: "/OABSS"
@@ -75,13 +75,40 @@ export default {
                 },
                 {
                   entity: {
-                    id: 16,
+                    id: 44,
                     icon: "el-icon-service\r\n",
                     name: "SF-36",
                     value: "/SF-36"
                   }
                 }
               ]
+            }
+          ]
+        },
+        {
+          //一级
+          entity: {
+            id: 7,
+            icon: "el-icon-menu",
+            name: "排尿日志"
+          },
+          //二级
+          childs: [
+            {
+              entity: {
+                id: 8,
+                icon: "el-icon-phone-outline\r\n",
+                name: "历史日志",
+                value: "/pastRcd"
+              }
+            },
+            {
+              entity: {
+                id: 9,
+                icon: "el-icon-phone-outline\r\n",
+                name: "每日日志",
+                value: "/todayRcd"
+              }
             }
           ]
         }

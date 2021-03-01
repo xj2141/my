@@ -49,6 +49,7 @@ public class UserController {
         } else {
             String target = MD5Util.md5(username + password);
             user.setPassword(target);
+            user.setSex("男");
             userService.insert(user);
             map.put("status", "success");
             map.put("msg", "注册成功");

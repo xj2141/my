@@ -156,7 +156,7 @@ export default{
 .all{
   width:300px;
   margin-top: 3%;
-  margin-left: calc(calc(100vw - 300px) / 2); /** 动态居中 */
+  margin-left: calc(calc(100vw - 550px) / 2); /** 动态居中 */
   font-size: 20px;
 }
 </style>

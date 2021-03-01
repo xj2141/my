@@ -204,6 +204,7 @@ export default{
       }).then(response =>
       {
         this.tableData = response.data;
+        console.log(this.tableData[1].conclusion);
       }).catch(error =>
       {
         console.log(error);

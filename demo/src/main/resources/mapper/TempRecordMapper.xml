@@ -1,0 +1,78 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD com.example.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.TempRecordDao">
+
+    <resultMap id="resultPre" type="com.example.demo.domain.TempPreRecord">
+        <result property="recordDate" column="recordDate" />
+        <result property="wakeTime" column="wakeTime"/>
+        <result property="sleepTime" column="sleepTime"/>
+    </resultMap>
+
+    <resultMap id="resultSuf" type="com.example.demo.domain.TempSufRecord">
+        <id property="recordId" column="recordId" />
+        <result property="flowTime" column="flowTime"/>
+        <result property="capacity" column="capacity"/>
+        <result property="flowFastYN" column="flowFastYN"/>
+        <result property="flowLeakYN" column="flowLeakYN"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="getPre" resultMap="resultPre">
+        select * from tempPreRecord
+    </select>
+
+    <insert id="insertPre" parameterType="com.example.demo.domain.TempPreRecord">
+        insert into tempPreRecord(recordDate,wakeTime,sleepTime)
+        values (
+        #{recordDate,jdbcType=VARCHAR},
+        #{wakeTime,jdbcType=VARCHAR},
+        #{sleepTime,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updatePre" parameterType="com.example.demo.domain.TempPreRecord">
+        update tempPreRecord
+        set wakeTime=#{wakeTime},sleepTime=#{sleepTime}
+        where recordDate=#{recordDate}
+    </update>
+
+    <delete id="removePre">
+        truncate table tempPreRecord
+    </delete>
+
+    <select id="getSuf" resultMap="resultSuf">
+        select * from tempSufRecord
+    </select>
+
+    <select id="getCountSuf" resultType="Integer">
+        select count(*) from tempSufRecord
+    </select>
+
+    <insert id="insertSuf" parameterType="com.example.demo.domain.TempSufRecord">
+        insert into tempSufRecord(flowTime,capacity,flowFastYN,flowLeakYN,remark)
+        values (
+        #{flowTime,jdbcType=VARCHAR},
+        #{capacity,jdbcType=VARCHAR},
+        #{flowFastYN,jdbcType=VARCHAR},
+        #{flowLeakYN,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateSuf" parameterType="com.example.demo.domain.TempSufRecord">
+        update tempSufRecord
+        set flowTime=#{flowTime},capacity=#{capacity},flowFastYN=#{flowFastYN},flowLeakYN=#{flowLeakYN},remark=#{remark}
+        where recordId=#{recordId}
+    </update>
+
+    <delete id="deleteSuf" parameterType="Integer">
+        delete from tempSufRecord
+        where recordId=#{recordId}
+    </delete>
+
+    <delete id="removeSuf">
+        truncate table tempSufRecord
+    </delete>
+</mapper>

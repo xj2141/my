@@ -12,9 +12,7 @@
         <el-input name="name" type="text" v-model="infoForm.name" placeholder="请输入姓名"></el-input>
       </el-form-item>
       <el-form-item label="性别">
-        <el-select v-model="infoForm.sex" placeholder="请选择" style="width: 300px">
-          <el-option v-for="item in items" :key="item.value" :label="item.label" :value="item.value"></el-option>
-        </el-select>
+        <el-input name="sex" type="text" v-model="infoForm.sex" :disabled="true"></el-input>
       </el-form-item>
       <el-form-item label="年龄" prop="age">
         <el-input name="age" type="text" v-model.number="infoForm.age" placeholder="请输入年龄"></el-input>
@@ -54,20 +52,6 @@ export default{
       callback()
     }
     return{
-      items:[
-        {
-          value:'',
-          label:''
-        },
-        {
-          value:'男',
-          label:'男'
-        },
-        {
-          value:'女',
-          label:'女'
-        }
-      ],
       infoForm:{
         username:'',
         name:'',
@@ -178,7 +162,7 @@ export default{
 .all{
   width:400px;
   margin-top: 4%;
-  margin-left: calc(calc(100vw - 500px) / 2); /** 动态居中 */
+  margin-left: calc(calc(100vw - 750px) / 2); /** 动态居中 */
   font-size: 20px;
 }
 </style>

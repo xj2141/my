@@ -87,6 +87,24 @@ const constantRouterMap=[
           requireAuth: true
         },
         component:()=>import('@/views/user/changePwd')
+      },
+      {
+        //历史日志
+        path:'/pastRcd',
+        name:'历史日志',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/record/pastRcd')
+      },
+      {
+        //每日日志
+        path:'/todayRcd',
+        name:'每日日志',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/record/todayRcd')
       }
     ]
   }

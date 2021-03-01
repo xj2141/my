@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.dao.EvaluateDao;
 import com.example.demo.domain.Evaluate;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +9,7 @@ import java.util.List;
 
 @Service
 public class EvaluateService {
+
     @Autowired
     private EvaluateDao evaluateDao;
 
