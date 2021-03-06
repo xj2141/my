@@ -1,0 +1,80 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD com.example.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.FlowTestDao">
+
+    <resultMap id="resultPre" type="com.example.demo.domain.Test">
+        <id property="testId" column="testId" />
+        <result property="testDate" column="testDate" />
+        <result property="testTime" column="testTime"/>
+        <result property="testPlace" column="testPlace"/>
+        <result property="vv" column="vv"/>
+        <result property="qmax" column="qmax"/>
+        <result property="ft" column="ft"/>
+        <result property="tqmax" column="tqmax"/>
+        <result property="flowBeginId" column="flowBeginId"/>
+        <result property="flowEndId" column="flowEndId"/>
+        <result property="conclusion" column="conclusion"/>
+    </resultMap>
+
+    <resultMap id="resultFlow" type="com.example.demo.domain.Flow">
+        <id property="id" column="id" />
+        <result property="rate" column="rate"/>
+        <result property="time" column="time"/>
+    </resultMap>
+
+    <select id="getPre" resultMap="resultPre">
+        select * from preRecord
+        where recordDate between #{firstDate} AND #{lastDate}
+        order by recordDate asc
+    </select>
+
+    <select id="getPreByDate" resultMap="resultPre" parameterType="String">
+        select * from preRecord
+        where recordDate=#{recordDate}
+    </select>
+
+    <insert id="insertPre" parameterType="com.example.demo.domain.PreRecord">
+        insert into preRecord(recordDate,wakeTime,sleepTime,beginId,endId)
+        values (
+        #{recordDate,jdbcType=VARCHAR},
+        #{wakeTime,jdbcType=VARCHAR},
+        #{sleepTime,jdbcType=VARCHAR},
+        #{beginId,jdbcType=INTEGER},
+        #{endId,jdbcType=INTEGER}
+        )
+    </insert>
+
+    <delete id="removePre">
+        delete from preRecord where recordDate in
+        <foreach collection="array" item="recordDate" open="(" separator="," close=")">
+            #{recordDate}
+        </foreach>
+    </delete>
+
+    <select id="getFlow" resultMap="resultFlow">
+        select * from flow
+        where id between #{beginId} AND #{endId}
+    </select>
+
+    <insert id="insertFlow" parameterType="java.util.List">
+        insert into flow(rate,time)
+        values
+        <foreach collection="list"  item="item" index="index" separator=",">
+            (
+            #{item.rate,jdbcType=VARCHAR},
+            #{item.time,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteFlow">
+        delete from flow
+        where id between #{beginId} and #{endId}
+    </delete>
+
+    <delete id="removeFlow">
+        truncate table flow
+    </delete>
+</mapper>

@@ -1,60 +1,44 @@
 <template>
   <div>
-    <el-form :inline="true" :model="tempPreRcdForm" :rules="rules" ref="tempPreRcdForm" style="margin-top: 1%" size="mini">
-      <el-form-item label="日期">
-        <el-input :disabled="true" v-model="tempPreRcdForm.recordDate"></el-input>
-      </el-form-item>
-      <el-form-item label="起床时间" prop="wakeTime">
-        <el-time-picker value-format="HH:mm:ss" v-model="tempPreRcdForm.wakeTime" @change="updatePre"></el-time-picker>
-      </el-form-item>
-      <el-form-item label="入睡时间" prop="sleepTime">
-        <el-time-picker value-format="HH:mm:ss" v-model="tempPreRcdForm.sleepTime" @change="updatePre"></el-time-picker>
-      </el-form-item>
+    <el-form :inline="true" size="mini">
       <el-form-item>
         <el-button type="primary" size="mini" class="el-icon-circle-plus-outline" @click="dialogAdd=true">新增</el-button>
       </el-form-item>
     </el-form>
 
-  <el-table :data="tableData" highlight-current-row border style="width: 100%" ref="table">
-    <el-table-column label="排尿时间">
-      <template slot-scope="scope">
-        <span>{{ scope.row.flowTime }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="尿量">
-      <template slot-scope="scope">
-        <span>{{ scope.row.capacity }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="是否尿急">
-      <template slot-scope="scope">
-        <span>{{ scope.row.flowFastYN }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="是否漏尿">
-      <template slot-scope="scope">
-        <span>{{ scope.row.flowLeakYN }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="备注">
-      <template slot-scope="scope">
-        <span>{{ scope.row.remark }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="操作" fixed="right">
-      <template slot-scope="scope">
-        <el-button size="mini" icon="el-icon-edit" @click="handleEdit(scope.$index,scope.row)">修改</el-button>
-        <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.$index,scope.row)">删除</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-
-    <el-form style="text-align: center;margin-top: 1%">
-      <el-form-item>
-        <el-button type="primary" size="mini" @click="submit">提交</el-button>
-        <el-button type="primary" size="mini" @click="refresh">刷新</el-button>
-      </el-form-item>
-    </el-form>
+    <el-table :data="tableData" highlight-current-row border style="width: 800px" ref="table">
+      <el-table-column label="排尿时间">
+        <template slot-scope="scope">
+          <span>{{ scope.row.flowTime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="尿量">
+        <template slot-scope="scope">
+          <span>{{ scope.row.capacity }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否尿急">
+        <template slot-scope="scope">
+          <span>{{ scope.row.flowFastYN }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否漏尿">
+        <template slot-scope="scope">
+          <span>{{ scope.row.flowLeakYN }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" width="200px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.remark }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" fixed="right" width="200px">
+        <template slot-scope="scope">
+          <el-button size="mini" icon="el-icon-edit" @click="handleEdit(scope.$index,scope.row)">修改</el-button>
+          <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.$index,scope.row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
     <el-form :model="tempSufRcdAForm" :rules="rules" ref="tempSufRcdAForm" label-width="100px" class="demo-form" size="mini">
       <el-dialog :append-to-body='true' :visible.sync="dialogAdd" width="380px" :before-close="handleCloseAdd">
@@ -118,13 +102,9 @@
 
 <script>
 export default {
+  name:'InForm',
   data(){
     return{
-      tempPreRcdForm:{
-        recordDate:'',
-        wakeTime:'',
-        sleepTime:''
-      },
       tempSufRcdAForm:{
         recordId:'',
         flowTime:'',
@@ -155,12 +135,6 @@ export default {
         }
       ],
       rules:{
-        wakeTime: [
-          {required: true, message: '必填项', trigger: 'blur'}
-        ],
-        sleepTime: [
-          {required: true, message: '必填项', trigger: 'blur'}
-        ],
         flowTime: [
           {required: true, message: '必填项', trigger: 'blur'}
         ],
@@ -177,64 +151,6 @@ export default {
     }
   },
   methods:{
-    getDate() {
-      let nowDate = new Date();
-      let date = {
-        year: nowDate.getFullYear(),
-        month: nowDate.getMonth() + 1,
-        date: nowDate.getDate(),
-      }
-      let systemDate = date.year + '-';
-      if(date.month<10){
-        systemDate+='0' + date.month + '-';
-      }else{
-        systemDate+=date.month + '-';
-      }
-      if(date.date<10){
-        systemDate+='0' + date.date;
-      }else{
-        systemDate+=date.date;
-      }
-      return systemDate;
-    },
-    updatePre(){
-      let postData=this.qs.stringify({
-        recordDate:this.tempPreRcdForm.recordDate,
-        wakeTime:this.tempPreRcdForm.wakeTime,
-        sleepTime:this.tempPreRcdForm.sleepTime
-      });
-      this.axios.post('/tempRecord/getPre').then(response=>{
-        let first=response.data;
-        if(first.length==0){
-          this.axios({
-            method: 'post',
-            url:'tempRecord/insertPre',
-            data:postData
-          }).then(response =>
-          {
-            console.log(response);
-          }).catch(error =>
-          {
-            console.log(error);
-          });
-        }else{
-          this.axios({
-            method: 'post',
-            url:'tempRecord/updatePre',
-            data:postData
-          }).then(response =>
-          {
-            console.log(response);
-          }).catch(error =>
-          {
-            console.log(error);
-          });
-        }
-      }).catch(error =>
-      {
-        console.log(error);
-      });
-    },
     handleEdit(index, row) {
       console.log(index)
       this.dialogUpdate = true;
@@ -251,11 +167,11 @@ export default {
         });
         this.axios({
           method: 'post',
-          url:'/tempRecord/deleteSuf',
+          url:'/secTempRecord/delete',
           data:postData
         }).then(response =>
         {
-          this.axios.post('/tempRecord/getSuf').then(response=>{
+          this.axios.post('/secTempRecord/get').then(response=>{
             this.tableData = response.data;
             this.$message({
               type: 'success',
@@ -327,10 +243,10 @@ export default {
           });
           this.axios({
             method: 'post',
-            url: '/tempRecord/insertSuf',
+            url: '/secTempRecord/insert',
             data: postData
           }).then(response => {
-            this.axios.post('/tempRecord/getSuf').then(response=>{
+            this.axios.post('/secTempRecord/get').then(response=>{
               this.tableData = response.data;
               this.$message({
                 type: 'success',
@@ -363,10 +279,10 @@ export default {
           console.log(postData);
           this.axios({
             method: 'post',
-            url: '/tempRecord/updateSuf',
+            url: '/secTempRecord/update',
             data: postData
           }).then(response => {
-            this.axios.post('/tempRecord/getSuf').then(response=>{
+            this.axios.post('/secTempRecord/get').then(response=>{
               this.tableData=response.data;
               this.$message({
                 type: 'success',
@@ -384,97 +300,7 @@ export default {
           return false;
         }
       });
-    },
-    clear(){
-      this.axios.post('/tempRecord/removePre').then(res=>{}).catch(err=>{});
-      this.axios.post('tempRecord/removeSuf').then(res=>{}).catch(err=>{});
-      this.tempPreRcdForm.recordDate=this.getDate();
-      this.tempPreRcdForm.wakeTime='';
-      this.tempPreRcdForm.sleepTime='';
-      this.tableData=[];
-    },
-    refresh(){
-      this.clear();
-      this.$message({
-        type: 'success',
-        message: '刷新成功'
-      });
-    },
-    submit(){
-      if(this.tempPreRcdForm.wakeTime==''||this.tempPreRcdForm.sleepTime==''){
-        this.$message({
-          type:'error',
-          message:'星号为必填项'
-        });
-        return;
-      }
-      this.axios.post('/tempRecord/getSuf').then(response=>{
-        let result=response.data;
-        if(result.length==0){
-          this.$message({
-            type:'error',
-            message:'日志无记录，提交失败'
-          });
-        }else {
-          let postData=this.qs.stringify({
-            recordDate:this.tempPreRcdForm.recordDate
-          });
-          this.axios({
-            method: 'post',
-            url: '/record/findByDate',
-            data: postData
-          }).then(response => {
-            let status = response.data.status;
-            if (status == "success") {
-              this.axios.post('/record/insertTempSuf').then(res=>{}).catch(err=>{});
-              let data=this.qs.stringify({
-                recordDate:this.tempPreRcdForm.recordDate,
-                wakeTime:this.tempPreRcdForm.wakeTime,
-                sleepTime:this.tempPreRcdForm.sleepTime
-              });
-              this.axios({
-                method: 'post',
-                url: '/record/insertTempPre',
-                data: data
-              }).then(response => {
-                console.log(response);
-              }).catch(error => {
-                console.log(error);
-              });
-              this.$message.success('提交成功');
-              this.clear();
-            } else {
-              this.$message.error('此日日志已存在，请先删除旧日志');
-            }
-          }).catch(error => {
-            console.log(error);
-          });
-        }
-      })
     }
-  },
-  created(){
-    this.axios.post('/tempRecord/getPre').then(response=>{
-      let first=response.data;
-      console.log(first.length);
-      if(first.length==0){
-        this.tempPreRcdForm.recordDate=this.getDate();
-      }else{
-        this.tempPreRcdForm.recordDate=first[0].recordDate;
-        this.tempPreRcdForm.wakeTime=first[0].wakeTime;
-        this.tempPreRcdForm.sleepTime=first[0].sleepTime;
-      }
-    }).catch(error =>
-    {
-      console.log(error);
-    });
-
-    this.axios.post('/tempRecord/getSuf').then(response=>{
-      this.tableData=response.data;
-    }).catch(error =>
-    {
-      console.log(error);
-    });
   }
 }
 </script>

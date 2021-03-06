@@ -16,8 +16,8 @@ public class RecordService {
     private RecordDao recordDao;
 
     /*日志前缀*/
-    public List<PreRecord> getPre(){
-        return recordDao.getPre();
+    public List<PreRecord> getPre(String firstDate, String lastDate){
+        return recordDao.getPre(firstDate, lastDate);
     }
 
     public PreRecord getPreByDate(String recordDate){
@@ -45,11 +45,11 @@ public class RecordService {
         return recordDao.insertTempSuf();
     }
 
-    public int insertSuf(List<SufRecord>suf){
-        return recordDao.insertSuf(suf);
+    public int insertSuf(){
+        return recordDao.insertSuf();
     }
 
-    public int removeSuf(String []recordId){
-        return recordDao.removeSuf(recordId);
+    public int removeSuf(Integer beginId,Integer endId){
+        return recordDao.removeSuf(beginId,endId);
     }
 }

@@ -1,0 +1,49 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD com.example.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.SecTempRecordDao">
+
+    <resultMap id="result" type="com.example.demo.domain.SecTempRecord">
+        <id property="recordId" column="recordId" />
+        <result property="flowTime" column="flowTime"/>
+        <result property="capacity" column="capacity"/>
+        <result property="flowFastYN" column="flowFastYN"/>
+        <result property="flowLeakYN" column="flowLeakYN"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="get" resultMap="result">
+        select * from secTempRecord
+    </select>
+
+    <select id="getCount" resultType="Integer">
+        select count(*) from secTempRecord
+    </select>
+
+    <insert id="insert" parameterType="com.example.demo.domain.SecTempRecord">
+        insert into secTempRecord(flowTime,capacity,flowFastYN,flowLeakYN,remark)
+        values (
+        #{flowTime,jdbcType=VARCHAR},
+        #{capacity,jdbcType=VARCHAR},
+        #{flowFastYN,jdbcType=VARCHAR},
+        #{flowLeakYN,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.example.demo.domain.SecTempRecord">
+        update secTempRecord
+        set flowTime=#{flowTime},capacity=#{capacity},flowFastYN=#{flowFastYN},flowLeakYN=#{flowLeakYN},remark=#{remark}
+        where recordId=#{recordId}
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from secTempRecord
+        where recordId=#{recordId}
+    </delete>
+
+    <delete id="remove">
+        truncate table secTempRecord
+    </delete>
+</mapper>

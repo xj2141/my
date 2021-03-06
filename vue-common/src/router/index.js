@@ -105,6 +105,33 @@ const constantRouterMap=[
           requireAuth: true
         },
         component:()=>import('@/views/record/todayRcd')
+      },
+      {
+        //历史检测
+        path:'/pastTest',
+        name:'历史检测',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/flowTest/pastTest')
+      },
+      {
+        //每日检测
+        path:'/todayTest',
+        name:'每日检测',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/views/flowTest/todayTest')
+      },
+      {
+        //测试
+        path:'/flowTest',
+        name:'尿流检测',
+        meta: {
+          requireAuth: true
+        },
+        component:()=>import('@/components/flow/FlowTest')
       }
     ]
   }

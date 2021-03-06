@@ -34,6 +34,60 @@ export default {
         {
           //一级
           entity: {
+            id: 10,
+            icon: "el-icon-menu",
+            name: "尿流检测"
+          },
+          //二级
+          childs: [
+            {
+              entity: {
+                id: 11,
+                icon: "el-icon-phone-outline\r\n",
+                name: "历史检测",
+                value: "/pastTest"
+              }
+            },
+            {
+              entity: {
+                id: 12,
+                icon: "el-icon-phone-outline\r\n",
+                name: "每日检测",
+                value: "/todayTest"
+              }
+            }
+          ]
+        },
+        {
+          //一级
+          entity: {
+            id: 7,
+            icon: "el-icon-menu",
+            name: "排尿日志"
+          },
+          //二级
+          childs: [
+            {
+              entity: {
+                id: 8,
+                icon: "el-icon-phone-outline\r\n",
+                name: "历史日志",
+                value: "/pastRcd"
+              }
+            },
+            {
+              entity: {
+                id: 9,
+                icon: "el-icon-phone-outline\r\n",
+                name: "每日日志",
+                value: "/todayRcd"
+              }
+            }
+          ]
+        },
+        {
+          //一级
+          entity: {
             id: 4,
             icon: "el-icon-news",
             name: "量表"
@@ -82,33 +136,6 @@ export default {
                   }
                 }
               ]
-            }
-          ]
-        },
-        {
-          //一级
-          entity: {
-            id: 7,
-            icon: "el-icon-menu",
-            name: "排尿日志"
-          },
-          //二级
-          childs: [
-            {
-              entity: {
-                id: 8,
-                icon: "el-icon-phone-outline\r\n",
-                name: "历史日志",
-                value: "/pastRcd"
-              }
-            },
-            {
-              entity: {
-                id: 9,
-                icon: "el-icon-phone-outline\r\n",
-                name: "每日日志",
-                value: "/todayRcd"
-              }
             }
           ]
         }

@@ -18,7 +18,7 @@
 
     <el-table :data="tableData" highlight-current-row border style="width: 100%" @selection-change="handleSelectionChange" ref="table">
       <el-table-column type="selection"></el-table-column>
-      <el-table-column label="日期">
+      <el-table-column label="日期" sortable>
         <template slot-scope="scope">
           <span>{{ scope.row.evaluateDate }}</span>
         </template>
@@ -108,32 +108,36 @@ export default{
       this.multipleSelection=val;
     },
     removeBatch(){
-      this.$confirm('批量删除, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        let ids = this.multipleSelection.map(item => item.evaluateId).join();
-        this.axios.post("/evaluate/remove",{ids:ids}).
-        then(response =>
-        {
-          this.getRows();
-          this.currentPage=1;
-          this.handleCurrentChange();
-          this.$message({
-            type: 'success',
-            message: '批量删除成功!'
+      if(this.multipleSelection.length==0){
+        this.$message.warning("请先勾选选项");
+      }else{
+        this.$confirm('批量删除, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let ids = this.multipleSelection.map(item => item.evaluateId).join();
+          this.axios.post("/evaluate/remove",{ids:ids}).
+          then(response =>
+          {
+            this.getRows();
+            this.currentPage=1;
+            this.handleCurrentChange();
+            this.$message({
+              type: 'success',
+              message: '批量删除成功!'
+            });
+          }).catch(error =>
+          {
+            console.log(error);
           });
-        }).catch(error =>
-        {
-          console.log(error);
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消批量删除'
+          });
         });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消批量删除'
-        });
-      });
+      }
     },
     handleDelete(index, row) {
       console.log(index, row);

@@ -702,12 +702,12 @@ export default {
       }
       let systemDate = date.year + '-';
       if (date.month < 10) {
-        systemDate += 0 + date.month + '-';
+        systemDate += '0' + date.month + '-';
       } else {
         systemDate += date.month + '-';
       }
       if (date.date < 10) {
-        systemDate += 0 + date.date;
+        systemDate += '0' + date.date;
       } else {
         systemDate += date.date;
       }

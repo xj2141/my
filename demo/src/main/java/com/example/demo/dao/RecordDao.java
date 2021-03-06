@@ -11,7 +11,7 @@ import java.util.List;
 public interface RecordDao {
 
     /*日志前缀*/
-    public List<PreRecord> getPre();
+    public List<PreRecord> getPre(@Param("firstDate")String firstDate, @Param("lastDate")String lastDate);
 
     public PreRecord getPreByDate(String recordDate);
 
@@ -26,7 +26,7 @@ public interface RecordDao {
 
     public int insertTempSuf();
 
-    public int insertSuf(List<SufRecord>suf);
+    public int insertSuf();
 
-    public int removeSuf(String []recordId);
+    public int removeSuf(@Param("beginId")Integer beginId,@Param("endId")Integer endId);
 }

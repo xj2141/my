@@ -1,0 +1,96 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD com.example.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.TempFlowTestDao">
+
+    <resultMap id="resultTest" type="com.example.demo.domain.TempTest">
+        <id property="testId" column="testId" />
+        <result property="testDate" column="testDate" />
+        <result property="testTime" column="testTime"/>
+        <result property="testPlace" column="testPlace"/>
+        <result property="vv" column="vv"/>
+        <result property="qmax" column="qmax"/>
+        <result property="ft" column="ft"/>
+        <result property="tqmax" column="tqmax"/>
+        <result property="flowBeginId" column="flowBeginId"/>
+        <result property="flowEndId" column="flowEndId"/>
+        <result property="conclusion" column="conclusion"/>
+    </resultMap>
+
+    <resultMap id="resultFlow" type="com.example.demo.domain.TempFlow">
+        <id property="id" column="id" />
+        <result property="rate" column="rate"/>
+        <result property="time" column="time"/>
+    </resultMap>
+
+    <select id="getTest" resultMap="resultTest">
+        select * from tempTest
+    </select>
+
+    <select id="getCountTest" resultType="Integer">
+        select count(*) from tempTest
+    </select>
+
+    <insert id="insertTest" parameterType="com.example.demo.domain.TempTest">
+        insert into tempTest(testDate,testTime,testPlace,vv,qmax,ft,tqmax,flowBeginId,flowEndId,conclusion)
+        values (
+        #{testDate,jdbcType=VARCHAR},
+        #{testTime,jdbcType=VARCHAR},
+        #{testPlace,jdbcType=VARCHAR},
+        #{vv,jdbcType=VARCHAR},
+        #{qmax,jdbcType=VARCHAR},
+        #{ft,jdbcType=VARCHAR},
+        #{tqmax,jdbcType=VARCHAR},
+        #{flowBeginId,jdbcType=INTEGER},
+        #{flowEndId,jdbcType=INTEGER},
+        #{conclusion,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateTest" parameterType="com.example.demo.domain.TempTest">
+        update tempTest
+        set testDate=#{testDate},testTime=#{testTime},testPlace=#{testPlace},vv=#{vv},qmax=#{qmax},ft=#{ft},tqmax=#{tqmax},flowBeginId=#{flowBeginId},flowEndId=#{flowEndId},conclusion=#{conclusion}
+        where testId=#{testId}
+    </update>
+
+    <delete id="deleteTest" parameterType="int">
+        delete from tempTest
+        where testId=#{testId}
+    </delete>
+
+    <delete id="removeTest">
+        truncate table tempTest
+    </delete>
+
+    <select id="getFlow" resultMap="resultFlow">
+        select * from tempFlow
+        where id between #{beginId} AND #{endId}
+    </select>
+
+    <select id="getLastIdFlow" resultType="Integer">
+        select id from tempFlow
+        order by id desc
+        limit 0,1
+    </select>
+
+    <insert id="insertFlow" parameterType="java.util.List">
+        insert into tempFlow(rate,time)
+        values
+        <foreach collection="list"  item="item" index="index" separator=",">
+            (
+            #{item.rate,jdbcType=VARCHAR},
+            #{item.time,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteFlow">
+        delete from tempFlow
+        where id between #{beginId} and #{endId}
+    </delete>
+
+    <delete id="removeFlow">
+        truncate table tempFlow
+    </delete>
+</mapper>

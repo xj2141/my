@@ -23,6 +23,8 @@
 
     <select id="getPre" resultMap="resultPre">
         select * from preRecord
+        where recordDate between #{firstDate} AND #{lastDate}
+        order by recordDate asc
     </select>
 
     <select id="getPreByDate" resultMap="resultPre" parameterType="String">
@@ -64,24 +66,13 @@
         select flowTime,capacity,flowFastYN,flowLeakYN,remark from tempSufRecord
     </insert>
 
-    <insert id="insertSuf" parameterType="java.util.List">
+    <insert id="insertSuf">
         insert into sufRecord(flowTime,capacity,flowFastYN,flowLeakYN,remark)
-        values
-        <foreach collection="list"  item="item" index="index" separator=",">
-            (
-            #{item.flowTime,jdbcType=VARCHAR},
-            #{item.capacity,jdbcType=VARCHAR},
-            #{item.flowFastYN,jdbcType=VARCHAR},
-            #{item.flowLeakYN,jdbcType=VARCHAR},
-            #{item.remark,jdbcType=VARCHAR}
-            )
-        </foreach>
+        select flowTime,capacity,flowFastYN,flowLeakYN,remark from secTempRecord
     </insert>
 
     <delete id="removeSuf">
-        delete from sufRecord where recordId in
-        <foreach collection="array" item="recordId" open="(" separator="," close=")">
-            #{recordId}
-        </foreach>
+        delete from sufRecord
+        where recordId between #{beginId} and #{endId}
     </delete>
 </mapper>
