@@ -8,17 +8,18 @@
           placeholder="选择日期"
           value-format="yyyy-MM-dd"
           :picker-options="pickerOption"
-          style="width: 160px">
+          style="width: 160px"
+          @change="updateDate">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" size="mini" class="el-icon-circle-plus-outline" @click="dialogAdd=true">新增</el-button>
+        <el-button type="primary" size="mini" class="el-icon-circle-plus-outline" @click="handleAdd">新增</el-button>
       </el-form-item>
     </el-form>
 
     <el-table :data="tableData" highlight-current-row border style="width: 100%" ref="table">
       <el-table-column
-        label="检测次数"
+        label="次数"
         width="50px"
         type="index"
         :index="indexMethod">
@@ -33,15 +34,16 @@
           <span>{{ scope.row.testPlace }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="检测结果">
+      <el-table-column label="检测结果" width="300px">
         <template slot-scope="scope">
           <span>{{ scope.row.conclusion }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" fixed="right">
         <template slot-scope="scope">
-          <el-button size="mini" icon="el-icon-edit" @click="handleEdit(scope.$index,scope.row)">修改</el-button>
-          <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.$index,scope.row)">删除</el-button>
+          <el-button size="mini" icon="el-icon-edit" @click="handleEdit(scope.$index,scope.row)">查看</el-button>
+          <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.$index,scope.row)">删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -54,8 +56,10 @@
     </el-form>
 
     <el-form label-width="100px" class="demo-form" size="mini">
-      <el-dialog title="添加记录" :append-to-body='true' :visible.sync="dialogAdd" width="1000px" :before-close="handleCloseAdd" center>
-        <FlowTest ref="flowtest"></FlowTest>
+      <el-dialog title="添加记录" :append-to-body='true' :visible.sync="dialogAdd" width="1000px"
+                 :before-close="handleCloseAdd" center>
+        <FlowTestAdd v-if="renderComponentAdd" ref="flowTestAdd" :nowTestForm="testForm"
+                     :nowFlowData="flowForm"></FlowTestAdd>
         <span slot="footer" class="dialog-footer">
           <el-button @click="cancelAdd" size="mini">取消</el-button>
           <el-button @click="add" type="primary" size="mini">确定</el-button>
@@ -64,8 +68,10 @@
     </el-form>
 
     <el-form label-width="100px" class="demo-form" size="mini">
-      <el-dialog title="修改记录" :append-to-body='true' :visible.sync="dialogUpdate" width="1000px" :before-close="handleCloseUpdate" center>
-        <FlowTest :testForm="testForm" :flowData="flowForm"></FlowTest>
+      <el-dialog title="修改记录" :append-to-body='true' :visible.sync="dialogUpdate" width="1000px"
+                 :before-close="handleCloseUpdate" center>
+        <FlowTestUpdate v-if="renderComponentUpdate" ref="flowTestUpdate" :nowTestForm="testForm"
+                        :nowFlowData="flowForm"></FlowTestUpdate>
         <span slot="footer" class="dialog-footer">
           <el-button @click="cancelUpdate" size="mini">取消</el-button>
           <el-button @click="update" type="primary" size="mini">确定</el-button>
@@ -76,14 +82,18 @@
 </template>
 
 <script>
-import FlowTest from '@/components/flow/FlowTest'
+import FlowTestAdd from '@/components/flow/FlowTestAdd'
+import FlowTestUpdate from '@/components/flow/FlowTestUpdate'
 
 export default {
   components: {
-    FlowTest
+    FlowTestAdd,
+    FlowTestUpdate
   },
-  data(){
-    return{
+  data() {
+    return {
+      renderComponentAdd: true,
+      renderComponentUpdate: true,
       testForm: {
         testDate: '',
         testTime: '',
@@ -96,9 +106,9 @@ export default {
         flowEndId: '',
         conclusion: ''
       },
-      flowForm:[],
-      tableData:[],
-      flowData:[],
+      flowForm: [],
+      tableData: [],
+      flowData: [],
       dialogAdd: false,
       dialogUpdate: false,
       pickerOption: {
@@ -108,46 +118,80 @@ export default {
       }
     }
   },
-  methods:{
+  methods: {
+    forceRerenderAdd() {
+      // 从 DOM 中删除 my-component 组件
+      this.renderComponentAdd = false;
+      this.$nextTick(() => {
+        // 在 DOM 中添加 my-component 组件
+        this.renderComponentAdd = true;
+      });
+    },
+    forceRerenderUpdate() {
+      // 从 DOM 中删除 my-component 组件
+      this.renderComponentUpdate = false;
+      this.$nextTick(() => {
+        // 在 DOM 中添加 my-component 组件
+        this.renderComponentUpdate = true;
+      });
+    },
     indexMethod(index) {
       return index + 1;
     },
-    getDate() {
-      let nowDate = new Date();
-      let date = {
-        year: nowDate.getFullYear(),
-        month: nowDate.getMonth() + 1,
-        date: nowDate.getDate(),
-      }
-      let systemDate = date.year + '-';
-      if(date.month<10){
-        systemDate+='0' + date.month + '-';
-      }else{
-        systemDate+=date.month + '-';
-      }
-      if(date.date<10){
-        systemDate+='0' + date.date;
-      }else{
-        systemDate+=date.date;
-      }
-      return systemDate;
+    getNowTime() {
+      var now = new Date();
+      var year = now.getFullYear(); //得到年份
+      var month = now.getMonth(); //得到月份
+      var date = now.getDate(); //得到日期
+      month = month + 1;
+      month = month.toString().padStart(2, "0");
+      date = date.toString().padStart(2, "0");
+      var defaultDate = `${year}-${month}-${date}`;
+      this.$set(this.testForm, "testDate", defaultDate);
     },
-    get(){
-      this.axios.post('/tempFlowTest/get').then(response=>{
-        this.tableData=response.data.pre;
-        this.flowData=response.data.suf;
-      }).catch(error =>
-      {
+    get() {
+      this.axios.post('/tempFlowTest/get').then(response => {
+        this.tableData = response.data.pre;
+        this.flowData = response.data.suf;
+      }).catch(error => {
         console.log(error);
       });
     },
+    updateDate(){
+      let length=this.tableData.length;
+      if(length!=0&&this.testForm.testDate!=null){
+        let postData=this.qs.stringify({
+          testDate:this.testForm.testDate,
+        });
+        this.axios.post('/tempFlowTest/updateDate',postData).then(response=>{}).catch(error =>{});
+      }
+    },
+    handleAdd() {
+      let testDate=this.testForm.testDate;
+      this.testForm = {
+        testDate: testDate,
+        testTime: '',
+        testPlace: '',
+        vv: '',
+        qmax: '',
+        ft: '',
+        tqmax: '',
+        flowBeginId: '',
+        flowEndId: '',
+        conclusion: ''
+      };
+      this.flowForm = [];
+      this.forceRerenderAdd();
+      this.dialogAdd = true;
+    },
     handleEdit(index, row) {
-      console.log(index)
-      this.dialogUpdate = true;
       this.testForm = Object.assign({}, row); //这句是关键！！！
-      this.flowForm=this.flowData[index];
+      this.flowForm = this.flowData[index];
+      this.forceRerenderUpdate();
+      this.dialogUpdate = true;
     },
     handleDelete(index, row) {
+      this.forceRerenderUpdate();
       this.$confirm('删除操作, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -156,17 +200,15 @@ export default {
         let postData = this.qs.stringify(row);
         this.axios({
           method: 'post',
-          url:'/tempFlowTest/delete',
-          data:postData
-        }).then(response =>
-        {
+          url: '/tempFlowTest/delete',
+          data: postData
+        }).then(response => {
           this.get();
           this.$message({
             type: 'success',
             message: '删除成功!'
           });
-        }).catch(error =>
-        {
+        }).catch(error => {
           console.log(error);
         });
       }).catch(() => {
@@ -182,7 +224,8 @@ export default {
           this.cancelAdd();
           done();
         })
-        .catch(_ => {});
+        .catch(_ => {
+        });
     },
     handleCloseUpdate(done) {
       this.$confirm('确认关闭？')
@@ -190,60 +233,54 @@ export default {
           this.cancelUpdate();
           done();
         })
-        .catch(_ => {});
+        .catch(_ => {
+        });
     },
     cancelAdd() {
+      this.$refs.flowTestAdd.cancel();
       this.dialogAdd = false;
     },
-    cancelUpdate(){
+    cancelUpdate() {
+      this.$refs.flowTestUpdate.cancel();
       this.dialogUpdate = false;
     },
-
-    add(){
-
+    add() {
+      this.$refs.flowTestAdd.add();
+      let result = this.$refs.flowTestAdd.addResult;
+      if (result == true) {
+        setTimeout(()=>{
+          this.$message({
+            type: 'success',
+            message: '添加成功'
+          });
+          this.cancelAdd();
+          this.get();
+        },800)
+      }
     },
-    update(){
-      this.$refs.tempSufRcdUForm.validate(valid => {
-        if (valid) {
-          let postData = this.qs.stringify({
-            recordId: this.tempSufRcdUForm.recordId,
-            flowTime: this.tempSufRcdUForm.flowTime,
-            capacity: this.tempSufRcdUForm.capacity,
-            flowFastYN:this.tempSufRcdUForm.flowFastYN,
-            flowLeakYN:this.tempSufRcdUForm.flowLeakYN,
-            remark:this.tempSufRcdUForm.remark
+    update() {
+      this.$refs.flowTestUpdate.update();
+      let result = this.$refs.flowTestUpdate.updateResult;
+      if (result == true) {
+        setTimeout(()=>{
+          this.$message({
+            type: 'success',
+            message: '修改成功'
           });
-          console.log(postData);
-          this.axios({
-            method: 'post',
-            url: '/tempRecord/updateSuf',
-            data: postData
-          }).then(response => {
-            this.axios.post('/tempRecord/getSuf').then(response=>{
-              this.tableData=response.data;
-              this.$message({
-                type: 'success',
-                message: '修改成功'
-              });
-              this.cancelUpdate();
-            }).catch(error=>{
-              console.log(error);
-            });
-          }).catch(error => {
-            console.log(error);
-          });
-        } else {
-          console.log("参数验证不合法！");
-          return false;
-        }
+          this.cancelUpdate();
+          this.get();
+        },800)
+      }
+    },
+    clear() {
+      this.axios.post('/tempFlowTest/remove').then(res => {
+      }).catch(err => {
       });
+      this.getNowTime();
+      this.tableData = [];
+      this.flowData = [];
     },
-    clear(){
-      this.axios.post('/tempFlowTest/remove').then(res=>{}).catch(err=>{});
-      this.testDate=this.getDate();
-      this.tableData=[];
-    },
-    refresh(){
+    refresh() {
       this.clear();
       this.$message({
         type: 'success',
@@ -294,14 +331,19 @@ export default {
     //     }
     // }
   },
-  created(){
-    this.get();
-    let data=this.tableData;
-      if(data.length==0){
-        this.testDate=this.getDate();
-      }else{
-        this.testDate=data[0].testDate;
+  created() {
+    this.axios.post('/tempFlowTest/get').then(response => {
+      this.tableData = response.data.pre;
+      this.flowData = response.data.suf;
+      let data=this.tableData;
+      if (data.length == 0) {
+        this.getNowTime();
+      } else {
+        this.testForm.testDate = data[0].testDate;
       }
+    }).catch(error => {
+      console.log(error);
+    });
   }
 }
 </script>

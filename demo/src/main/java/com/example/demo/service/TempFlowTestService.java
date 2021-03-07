@@ -14,6 +14,10 @@ public class TempFlowTestService {
     @Autowired
     private TempFlowTestDao tempFlowTestDao;
 
+    public int updateDate(String testDate){
+        return tempFlowTestDao.updateDate(testDate);
+    }
+
     public List<TempTest> getTest(){
         return tempFlowTestDao.getTest();
     }

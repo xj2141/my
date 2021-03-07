@@ -1,28 +1,28 @@
 <template>
-  <div style="width: 1000px;margin-left: 50px">
+  <div style="width: 893px;margin-left: 28px">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>基本信息</span>
       </div>
       <div>
         <el-form :inline="true">
-          <el-form-item :label="'\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+'姓名：'">
-            <el-input v-model="infoForm.name" disabled size="mini" style="width: 200px;"></el-input>
+          <el-form-item :label="'\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+'姓名:'">
+            <el-input v-model="infoForm.name" disabled size="mini" style="width: 180px;"></el-input>
           </el-form-item>
-          <el-form-item :label="'\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+'性别：'">
-            <el-input v-model="infoForm.sex" disabled size="mini" style="width: 200px;"></el-input>
+          <el-form-item :label="'\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+'性别:'">
+            <el-input v-model="infoForm.sex" disabled size="mini" style="width: 180px;"></el-input>
           </el-form-item>
-          <el-form-item label="年龄：">
-            <el-input v-model="infoForm.age" disabled size="mini" style="width: 200px;"></el-input>
+          <el-form-item :label="'\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+'年龄:'">
+            <el-input v-model="infoForm.age" disabled size="mini" style="width: 180px;"></el-input>
           </el-form-item>
         </el-form>
         <el-form :inline="true" :model="testForm" :rules="rules" ref="testForm">
-          <el-form-item label="检测时间：" prop="testTime">
+          <el-form-item label="检测时间:" prop="testTime">
             <el-time-picker value-format="HH:mm:ss" v-model="testForm.testTime" size="mini"
-                            style="width: 200px;"></el-time-picker>
+                            style="width: 180px;"></el-time-picker>
           </el-form-item>
-          <el-form-item label="检测地点：" prop="testPlace">
-            <el-input v-model="testForm.testPlace" placeholder="请输入内容" size="mini" style="width: 200px;"></el-input>
+          <el-form-item label="检测地点:" prop="testPlace">
+            <el-input v-model="testForm.testPlace" placeholder="请输入内容" size="mini" style="width: 180px;"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -46,22 +46,16 @@
         </el-upload>
       </div>
       <div v-show="testYes">
-      <br/>
-      <div>曲线</div>
-      <br/>
-      <div id="myChart" :style="{width: '800px', height: '400px'}"></div>
-      <br/>
-      <div>参数</div>
-      <br/>
-      <div>
-        <div>尿量(VV)：{{ testForm.vv }} 最大尿流率(Qmax)：{{ testForm.qmax }}</div>
         <br/>
-        <div>尿流时间(FT)：{{ testForm.ft }} 达峰时间(TQmax)：{{ testForm.tqmax }}</div>
-      </div>
-      <br/>
-      <div>结论</div>
-      <br/>
-      <div>{{ testForm.conclusion }}</div>
+        <div class="title"><u>No1.曲线</u></div>
+        <div id="myChartAdd" :style="{width: '800px', height: '400px', marginLeft:'25px'}"></div>
+        <div class="title"><u>No2.参数</u></div>
+        <br/>
+        <div style="text-align: center">尿量(VV)：{{ testForm.vv }}ml&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最大尿流率(Qmax)：{{ testForm.qmax }}ml/s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;尿流时间(FT)：{{ testForm.ft }}s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;达峰时间(TQmax)：{{ testForm.tqmax }}s</div>
+        <br/>
+        <div class="title"><u>No3.结论</u></div>
+        <br/>
+        <div style="text-align: center">{{ testForm.conclusion }}</div>
       </div>
     </el-card>
   </div>
@@ -78,23 +72,16 @@ require("echarts/lib/component/grid");
 require("echarts/lib/component/legend");
 
 export default {
-  name: "FlowTest",
-  // props:{
-  //   testForm:{
-  //     type:Object,
-  //     default:()=>{}
-  //   },
-  //   flowData:{
-  //     type:Array,
-  //     default:()=>{}
-  //   }
-  // },
-  // mounted() {
-  //   //调用drawLineChart()
-  //   this.drawLineChart();
-  // },
+  name: "FlowTestAdd",
+  props:{
+    nowTestForm:{
+      type:Object,
+      default:()=>{}
+    }
+  },
   data() {
     return {
+      addResult:false,
       infoForm: {
         name: '',
         sex: '',
@@ -162,11 +149,29 @@ export default {
       }
     }
   },
+  mounted() {
+    let username = sessionStorage.getItem('username');
+    let postData = this.qs.stringify({
+      username: username
+    });
+    this.axios({
+      method: 'post',
+      url: '/user/getInfo',
+      data: postData
+    }).then(response => {
+      this.infoForm.name = response.data.name;
+      this.infoForm.sex = response.data.sex;
+      this.infoForm.age = response.data.age;
+    }).catch(error => {
+      console.log(error);
+    });
+    this.testForm=this.nowTestForm;
+  },
   methods: {
     //绘制曲线图
     drawLineChart() {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = echarts.init(document.getElementById('myChart'));
+      let myChart = echarts.init(document.getElementById('myChartAdd'));
       // 绘制基本图表
       myChart.setOption(this.option);
       //显示加载动画
@@ -202,6 +207,7 @@ export default {
       this.importDataIcon = 'el-icon-upload2'
       this.importDisabled = false;
       this.$message.error("获取数据失败！");
+      this.testYes=false;
     },
     onSuccess(res) {
       this.testYes=true;
@@ -224,41 +230,67 @@ export default {
       this.importDisabled = true;
       this.importDataIcon = 'el-icon-loading';
     },
+    cancel(){
+      this.testForm={
+          testDate: '',
+          testTime: '',
+          testPlace: '',
+          vv: '',
+          qmax: '',
+          ft: '',
+          tqmax: '',
+          flowBeginId: '',
+          flowEndId: '',
+          conclusion: ''
+      };
+      this.flowData=[];
+      this.$refs.testForm.clearValidate();
+    },
     add(){
-      this.$refs.tempPreRcdForm.validate(valid => {
+      this.$refs.testForm.validate(valid => {
         if (valid) {
+          console.log(this.flowData.length);
           if(this.flowData.length==0){
-            this.$message.error("尿流检测无数据，添加失败")
+            this.$message.error("无尿流率测定数据，添加失败");
           }else{
-            
+            let params = {
+              params: this.flowData
+            };
+            let tempTest=JSON.stringify(this.testForm);
+            let count=this.flowData.length;
+            this.axios({
+              method: 'post',
+              url: '/tempFlowTest/insertFlow',
+              data: params
+            }).then(response =>
+            {
+              this.axios({
+                method: 'post',
+                url: '/tempFlowTest/insertTest',
+                data: {tempTest:tempTest,count:count}
+              }).then(response => {
+              }).catch(error => {});
+            }).catch(error => {
+              console.log(error);
+            });
+            this.addResult=true;
           }
         } else {
+          this.$message({
+            type:'error',
+            message:'星号为必填项'
+          });
           console.log("参数验证不合法！");
-          return false;
         }
       });
     }
-  },
-  created() {
-    let username = sessionStorage.getItem('username');
-    let postData = this.qs.stringify({
-      username: username
-    });
-    this.axios({
-      method: 'post',
-      url: '/user/getInfo',
-      data: postData
-    }).then(response => {
-      this.infoForm.name = response.data.name;
-      this.infoForm.sex = response.data.sex;
-      this.infoForm.age = response.data.age;
-    }).catch(error => {
-      console.log(error);
-    });
   }
 }
 </script>
 
 <style scoped>
-
+.title {
+  text-align: center;
+  color: rgb(90, 41, 41);
+}
 </style>

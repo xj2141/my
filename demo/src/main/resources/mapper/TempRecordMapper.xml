@@ -5,6 +5,7 @@
 <mapper namespace="com.example.demo.dao.TempRecordDao">
 
     <resultMap id="resultPre" type="com.example.demo.domain.TempPreRecord">
+        <id property="recordId" column="recordId" />
         <result property="recordDate" column="recordDate" />
         <result property="wakeTime" column="wakeTime"/>
         <result property="sleepTime" column="sleepTime"/>
@@ -34,8 +35,7 @@
 
     <update id="updatePre" parameterType="com.example.demo.domain.TempPreRecord">
         update tempPreRecord
-        set wakeTime=#{wakeTime},sleepTime=#{sleepTime}
-        where recordDate=#{recordDate}
+        set recordDate=#{recordDate},wakeTime=#{wakeTime},sleepTime=#{sleepTime}
     </update>
 
     <delete id="removePre">

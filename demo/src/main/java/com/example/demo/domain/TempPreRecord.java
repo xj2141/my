@@ -2,9 +2,18 @@ package com.example.demo.domain;
 
 public class TempPreRecord {
 
+    private int recordId;
     private String recordDate;
     private String wakeTime;
     private String sleepTime;
+
+    public int getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(int recordId) {
+        this.recordId = recordId;
+    }
 
     public String getRecordDate() {
         return recordDate;

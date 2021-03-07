@@ -100,7 +100,7 @@ const constantRouterMap=[
       {
         //每日日志
         path:'/todayRcd',
-        name:'每日日志',
+        name:'记录日志',
         meta: {
           requireAuth: true
         },
@@ -109,7 +109,7 @@ const constantRouterMap=[
       {
         //历史检测
         path:'/pastTest',
-        name:'历史检测',
+        name:'历史检测信息',
         meta: {
           requireAuth: true
         },
@@ -118,20 +118,11 @@ const constantRouterMap=[
       {
         //每日检测
         path:'/todayTest',
-        name:'每日检测',
+        name:'记录检测信息',
         meta: {
           requireAuth: true
         },
         component:()=>import('@/views/flowTest/todayTest')
-      },
-      {
-        //测试
-        path:'/flowTest',
-        name:'尿流检测',
-        meta: {
-          requireAuth: true
-        },
-        component:()=>import('@/components/flow/FlowTest')
       }
     ]
   }

@@ -10,6 +10,8 @@ import java.util.List;
 @Mapper
 public interface TempFlowTestDao {
 
+    public int updateDate(String testDate);
+
     //尿流检测
     public List<TempTest> getTest();
 

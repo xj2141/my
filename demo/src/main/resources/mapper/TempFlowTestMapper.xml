@@ -24,6 +24,10 @@
         <result property="time" column="time"/>
     </resultMap>
 
+    <update id="updateDate" parameterType="String">
+        update tempTest
+        set testDate=#{testDate}
+    </update>
     <select id="getTest" resultMap="resultTest">
         select * from tempTest
     </select>
@@ -50,7 +54,7 @@
 
     <update id="updateTest" parameterType="com.example.demo.domain.TempTest">
         update tempTest
-        set testDate=#{testDate},testTime=#{testTime},testPlace=#{testPlace},vv=#{vv},qmax=#{qmax},ft=#{ft},tqmax=#{tqmax},flowBeginId=#{flowBeginId},flowEndId=#{flowEndId},conclusion=#{conclusion}
+        set testTime=#{testTime},testPlace=#{testPlace},vv=#{vv},qmax=#{qmax},ft=#{ft},tqmax=#{tqmax},flowBeginId=#{flowBeginId},flowEndId=#{flowEndId},conclusion=#{conclusion}
         where testId=#{testId}
     </update>
 

@@ -44,7 +44,7 @@ export default {
               entity: {
                 id: 11,
                 icon: "el-icon-phone-outline\r\n",
-                name: "历史检测",
+                name: "历史检测信息",
                 value: "/pastTest"
               }
             },
@@ -52,7 +52,7 @@ export default {
               entity: {
                 id: 12,
                 icon: "el-icon-phone-outline\r\n",
-                name: "每日检测",
+                name: "记录检测信息",
                 value: "/todayTest"
               }
             }
@@ -79,7 +79,7 @@ export default {
               entity: {
                 id: 9,
                 icon: "el-icon-phone-outline\r\n",
-                name: "每日日志",
+                name: "记录日志",
                 value: "/todayRcd"
               }
             }
