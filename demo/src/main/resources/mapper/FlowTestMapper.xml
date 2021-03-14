@@ -4,9 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.dao.FlowTestDao">
 
-    <resultMap id="resultPre" type="com.example.demo.domain.Test">
-        <id property="testId" column="testId" />
+    <resultMap id="resultPre" type="com.example.demo.domain.TestPre">
+        <id property="id" column="id" />
+        <result property="username" column="username" />
         <result property="testDate" column="testDate" />
+        <result property="beginId" column="beginId"/>
+        <result property="endId" column="endId"/>
+    </resultMap>
+
+    <resultMap id="resultTest" type="com.example.demo.domain.Test">
+        <id property="testId" column="testId" />
         <result property="testTime" column="testTime"/>
         <result property="testPlace" column="testPlace"/>
         <result property="vv" column="vv"/>
@@ -24,33 +31,66 @@
         <result property="time" column="time"/>
     </resultMap>
 
-    <select id="getPre" resultMap="resultPre">
-        select * from preRecord
-        where recordDate between #{firstDate} AND #{lastDate}
-        order by recordDate asc
+    <select id="getTestPre" resultMap="resultPre">
+        select * from testPre
+        where username=#{username} and testDate between #{firstDate} AND #{lastDate}
+        order by testDate asc
     </select>
 
-    <select id="getPreByDate" resultMap="resultPre" parameterType="String">
-        select * from preRecord
-        where recordDate=#{recordDate}
+    <select id="getTestPreByDate" resultMap="resultPre" parameterType="String">
+        select * from testPre
+        where testDate=#{testDate} and username=#{username}
     </select>
 
-    <insert id="insertPre" parameterType="com.example.demo.domain.PreRecord">
-        insert into preRecord(recordDate,wakeTime,sleepTime,beginId,endId)
+    <insert id="insertTestPre" parameterType="com.example.demo.domain.TestPre">
+        insert into testPre(username,testDate,beginId,endId)
         values (
-        #{recordDate,jdbcType=VARCHAR},
-        #{wakeTime,jdbcType=VARCHAR},
-        #{sleepTime,jdbcType=VARCHAR},
+        #{username,jdbcType=VARCHAR},
+        #{testDate,jdbcType=VARCHAR},
         #{beginId,jdbcType=INTEGER},
         #{endId,jdbcType=INTEGER}
         )
     </insert>
 
-    <delete id="removePre">
-        delete from preRecord where recordDate in
-        <foreach collection="array" item="recordDate" open="(" separator="," close=")">
-            #{recordDate}
+    <delete id="removeTestPre">
+        delete from testPre where username=#{username} and testDate in
+        <foreach collection="dates" item="testDate" open="(" separator="," close=")">
+            #{testDate}
         </foreach>
+    </delete>
+
+    <select id="getTest" resultMap="resultTest">
+        select * from test
+        where testId between #{beginId} AND #{endId}
+    </select>
+
+    <select id="getLastIdTest" resultType="Integer">
+        select testId from test
+        order by testId desc
+        limit 0,1
+    </select>
+
+    <insert id="insertTest" parameterType="java.util.List">
+        insert into test(testTime,testPlace,vv,qmax,ft,tqmax,flowBeginId,flowEndId,conclusion)
+        values
+        <foreach collection="list"  item="item" index="index" separator=",">
+            (
+            #{item.testTime,jdbcType=VARCHAR},
+            #{item.testPlace,jdbcType=VARCHAR},
+            #{item.vv,jdbcType=VARCHAR},
+            #{item.qmax,jdbcType=VARCHAR},
+            #{item.ft,jdbcType=VARCHAR},
+            #{item.tqmax,jdbcType=VARCHAR},
+            #{item.flowBeginId,jdbcType=INTEGER},
+            #{item.flowEndId,jdbcType=INTEGER},
+            #{item.conclusion,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="removeTest">
+        delete from test
+        where testId between #{beginId} and #{endId}
     </delete>
 
     <select id="getFlow" resultMap="resultFlow">
@@ -69,12 +109,14 @@
         </foreach>
     </insert>
 
-    <delete id="deleteFlow">
+    <delete id="removeFlow">
         delete from flow
         where id between #{beginId} and #{endId}
     </delete>
 
-    <delete id="removeFlow">
-        truncate table flow
-    </delete>
+    <select id="getLastIdFlow" resultType="Integer">
+        select id from flow
+        order by id desc
+        limit 0,1
+    </select>
 </mapper>

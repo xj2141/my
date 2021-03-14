@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.User;
-import com.example.demo.service.UserService;
+import com.example.demo.domain.Doctor;
+import com.example.demo.domain.Patient;
+import com.example.demo.service.DoctorService;
+import com.example.demo.service.PatientService;
 import com.example.demo.utils.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,94 +19,46 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private DoctorService doctorService;
+
+    @Autowired
+    private PatientService patientService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> login(User user) {
+    public Map<String, Object> login(String username, String password) {
         Map<String, Object> map = new HashMap<String, Object>();
-        String username = user.getUsername();
-        String password = user.getPassword();
         String target = MD5Util.md5(username + password);
-        user.setPassword(target);
-        if (userService.findByUser(user) == null) {
+        Doctor doctor=doctorService.findByUser(username,target);
+        Patient patient=patientService.findByUser(username,target);
+        if (doctor == null&&patient==null) {
             map.put("status", "error");
-            map.put("msg", "用户名或密码错误");
         } else {
             map.put("status", "success");
-            map.put("msg", "登录成功");
+            if(doctor!=null){
+                map.put("role","doctor");
+            }else{
+                map.put("role","patient");
+            }
         }
         return map;
     }
 
     @RequestMapping(value = "/regist", method = RequestMethod.POST)
-    public Map<String, Object> regist(User user) {
+    public Map<String, Object> regist(String username, String password) {
         Map<String, Object> map = new HashMap<String, Object>();
-        String username = user.getUsername();
-        String password = user.getPassword();
-
-        if (userService.findByUsername(username) != null) {
+        if (doctorService.findByUsername(username)!=null||patientService.findByUsername(username) != null) {
             map.put("status", "error");
             map.put("msg", "用户名已存在");
         } else {
             String target = MD5Util.md5(username + password);
-            user.setPassword(target);
-            user.setSex("男");
-            userService.insert(user);
+            Patient patient=new Patient();
+            patient.setUsername(username);
+            patient.setPassword(target);
+            patient.setSex("男");
+            patientService.insert(patient);
             map.put("status", "success");
             map.put("msg", "注册成功");
-        }
-        return map;
-    }
-
-    //修改基本信息
-    @RequestMapping(value = "/updateO", method = RequestMethod.POST)
-    public Map<String, Object> updateO(User user) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        int result = userService.updateO(user);
-        if (result >= 1) {
-            map.put("status", "success");
-            map.put("msg", "修改成功");
-        } else {
-            map.put("status", "error");
-            map.put("msg", "修改失败");
-        }
-        return map;
-    }
-
-    //获取基本信息
-    @RequestMapping(value = "/getInfo", method = RequestMethod.POST)
-    public Map<String, Object> getInfo(String username) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        User user=userService.findByUsername(username);
-        if(user!=null){
-            map.put("status", "success");
-            map.put("name", user.getName());
-            map.put("sex", user.getSex());
-            map.put("age", user.getAge());
-            map.put("phone", user.getPhone());
-        }else{
-            map.put("status", "error");
-            map.put("msg","获取用户信息失败");
-        }
-        return map;
-    }
-
-    //修改密码
-    @RequestMapping(value = "/updateP", method = RequestMethod.POST)
-    public Map<String, Object> updateP(User user) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        String username = user.getUsername();
-        String password = user.getPassword();
-        String target = MD5Util.md5(username + password);
-        user.setPassword(target);
-        int result = userService.updateP(user);
-        if (result >= 1) {
-            map.put("status", "success");
-            map.put("msg", "修改成功");
-        } else {
-            map.put("status", "error");
-            map.put("msg", "修改失败");
         }
         return map;
     }

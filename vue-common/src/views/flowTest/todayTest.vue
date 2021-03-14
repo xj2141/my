@@ -50,7 +50,7 @@
 
     <el-form style="text-align: center;margin-top: 1%">
       <el-form-item>
-        <el-button type="primary" size="mini">提交</el-button>
+        <el-button type="primary" size="mini" @click="submit">提交</el-button>
         <el-button type="primary" size="mini" @click="refresh">刷新</el-button>
       </el-form-item>
     </el-form>
@@ -59,7 +59,7 @@
       <el-dialog title="添加记录" :append-to-body='true' :visible.sync="dialogAdd" width="1000px"
                  :before-close="handleCloseAdd" center>
         <FlowTestAdd v-if="renderComponentAdd" ref="flowTestAdd" :nowTestForm="testForm"
-                     :nowFlowData="flowForm"></FlowTestAdd>
+                     :nowFlowData="flowForm" @parentHandle="cancelA"></FlowTestAdd>
         <span slot="footer" class="dialog-footer">
           <el-button @click="cancelAdd" size="mini">取消</el-button>
           <el-button @click="add" type="primary" size="mini">确定</el-button>
@@ -71,7 +71,7 @@
       <el-dialog title="修改记录" :append-to-body='true' :visible.sync="dialogUpdate" width="1000px"
                  :before-close="handleCloseUpdate" center>
         <FlowTestUpdate v-if="renderComponentUpdate" ref="flowTestUpdate" :nowTestForm="testForm"
-                        :nowFlowData="flowForm"></FlowTestUpdate>
+                        :nowFlowData="flowForm" @parentHandle="cancelU"></FlowTestUpdate>
         <span slot="footer" class="dialog-footer">
           <el-button @click="cancelUpdate" size="mini">取消</el-button>
           <el-button @click="update" type="primary" size="mini">确定</el-button>
@@ -95,6 +95,8 @@ export default {
       renderComponentAdd: true,
       renderComponentUpdate: true,
       testForm: {
+        testId:'',
+        username:'',
         testDate: '',
         testTime: '',
         testPlace: '',
@@ -150,7 +152,10 @@ export default {
       this.$set(this.testForm, "testDate", defaultDate);
     },
     get() {
-      this.axios.post('/tempFlowTest/get').then(response => {
+      let postData=this.qs.stringify({
+        username:sessionStorage.getItem('username')
+      });
+      this.axios.post('/tempFlowTest/get',postData).then(response => {
         this.tableData = response.data.pre;
         this.flowData = response.data.suf;
       }).catch(error => {
@@ -161,7 +166,8 @@ export default {
       let length=this.tableData.length;
       if(length!=0&&this.testForm.testDate!=null){
         let postData=this.qs.stringify({
-          testDate:this.testForm.testDate,
+          username:sessionStorage.getItem('username'),
+          testDate:this.testForm.testDate
         });
         this.axios.post('/tempFlowTest/updateDate',postData).then(response=>{}).catch(error =>{});
       }
@@ -169,6 +175,8 @@ export default {
     handleAdd() {
       let testDate=this.testForm.testDate;
       this.testForm = {
+        testId:'',
+        username:sessionStorage.getItem('username'),
         testDate: testDate,
         testTime: '',
         testPlace: '',
@@ -246,34 +254,31 @@ export default {
     },
     add() {
       this.$refs.flowTestAdd.add();
-      let result = this.$refs.flowTestAdd.addResult;
-      if (result == true) {
-        setTimeout(()=>{
-          this.$message({
-            type: 'success',
-            message: '添加成功'
-          });
-          this.cancelAdd();
-          this.get();
-        },800)
-      }
+    },
+    cancelA(){
+      this.$message({
+        type: 'success',
+        message: '添加成功'
+      });
+      this.cancelAdd();
+      this.get();
     },
     update() {
       this.$refs.flowTestUpdate.update();
-      let result = this.$refs.flowTestUpdate.updateResult;
-      if (result == true) {
-        setTimeout(()=>{
-          this.$message({
-            type: 'success',
-            message: '修改成功'
-          });
-          this.cancelUpdate();
-          this.get();
-        },800)
-      }
+    },
+    cancelU(){
+      this.$message({
+        type: 'success',
+        message: '修改成功'
+      });
+      this.cancelUpdate();
+      this.get();
     },
     clear() {
-      this.axios.post('/tempFlowTest/remove').then(res => {
+      let postData=this.qs.stringify({
+        username:sessionStorage.getItem('username')
+      });
+      this.axios.post('/tempFlowTest/remove',postData).then(res => {
       }).catch(err => {
       });
       this.getNowTime();
@@ -287,52 +292,52 @@ export default {
         message: '刷新成功'
       });
     },
-    // submit(){
-    //     let result=this.tableData;
-    //     if(result.length==0){
-    //       this.$message({
-    //         type:'error',
-    //         message:'表中无记录，提交失败'
-    //       });
-    //     }else {
-    //       let postData=this.qs.stringify({
-    //         recordDate:this.tempPreRcdForm.recordDate
-    //       });
-    //       this.axios({
-    //         method: 'post',
-    //         url: '/record/findByDate',
-    //         data: postData
-    //       }).then(response => {
-    //         let status = response.data.status;
-    //         if (status == "success") {
-    //           this.axios.post('/record/insertTempSuf').then(res=>{}).catch(err=>{});
-    //           let data=this.qs.stringify({
-    //             recordDate:this.tempPreRcdForm.recordDate,
-    //             wakeTime:this.tempPreRcdForm.wakeTime,
-    //             sleepTime:this.tempPreRcdForm.sleepTime
-    //           });
-    //           this.axios({
-    //             method: 'post',
-    //             url: '/record/insertTempPre',
-    //             data: data
-    //           }).then(response => {
-    //             console.log(response);
-    //           }).catch(error => {
-    //             console.log(error);
-    //           });
-    //           this.$message.success('提交成功');
-    //           this.clear();
-    //         } else {
-    //           this.$message.error('此日日志已存在，请先删除旧日志');
-    //         }
-    //       }).catch(error => {
-    //         console.log(error);
-    //       });
-    //     }
-    // }
+    submit(){
+      let username=sessionStorage.getItem('username');
+        let result=this.tableData;
+        if(result.length==0){
+          this.$message({
+            type:'error',
+            message:'表中无记录，提交失败'
+          });
+        }else {
+          if(this.testForm.testDate==null){
+            this.$message.error("日期为必填项");
+          }
+          else{
+            let postData=this.qs.stringify({
+              testDate:this.testForm.testDate,
+              username:username
+            });
+            this.axios({
+              method: 'post',
+              url: '/flowTest/findByDate',
+              data: postData
+            }).then(response => {
+              let status = response.data.status;
+              if (status == "success") {
+                let tempData=this.qs.stringify({
+                  username:username
+                });
+                this.axios.post('/flowTest/insert',tempData).then(res=>{
+                  this.$message.success('提交成功');
+                  this.clear();
+                }).catch(err=>{});
+              } else {
+                this.$message.error('此日尿流检测数据已存在，请先删除旧数据');
+              }
+            }).catch(error => {
+              console.log(error);
+            });
+          }
+        }
+    }
   },
   created() {
-    this.axios.post('/tempFlowTest/get').then(response => {
+    let postData=this.qs.stringify({
+      username:sessionStorage.getItem('username')
+    });
+    this.axios.post('/tempFlowTest/get',postData).then(response => {
       this.tableData = response.data.pre;
       this.flowData = response.data.suf;
       let data=this.tableData;

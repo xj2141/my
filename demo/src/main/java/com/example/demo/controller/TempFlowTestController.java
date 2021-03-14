@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.domain.TempFlow;
 import com.example.demo.domain.TempTest;
@@ -25,10 +24,9 @@ public class TempFlowTestController {
     private TempFlowTestService tempFlowTestService;
 
     @RequestMapping(value = "/get", method = RequestMethod.POST)
-    public Map<String, List> get() {
+    public Map<String, List> get(String username) {
         Map<String, List> map = new HashMap<String, List>();
-        List<TempTest>pre=tempFlowTestService.getTest();
-        System.out.println(pre.size());
+        List<TempTest>pre=tempFlowTestService.getTest(username);
         map.put("pre",pre);
         List<List<TempFlow>>suf=new ArrayList<>();
         List<TempFlow>tempFlow=new ArrayList<>();
@@ -63,8 +61,8 @@ public class TempFlowTestController {
     }
 
     @RequestMapping(value = "/updateDate", method = RequestMethod.POST)
-    public void updateDate(String testDate){
-        tempFlowTestService.updateDate(testDate);
+    public void updateDate(String username,String testDate){
+        tempFlowTestService.updateDate(username,testDate);
     }
 
     @RequestMapping(value = "/updateTest", method = RequestMethod.POST)
@@ -90,8 +88,13 @@ public class TempFlowTestController {
     }
 
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
-    public void remove(){
-        tempFlowTestService.removeTest();
-        tempFlowTestService.removeFlow();
+    public void remove(String username){
+        List<TempTest>pre=tempFlowTestService.getTest(username);
+        TempTest tempTest=new TempTest();
+        for(int i=0;i<pre.size();i++){
+            tempTest=pre.get(i);
+            this.deleteFlow(tempTest);
+        }
+        tempFlowTestService.removeTest(username);
     }
 }

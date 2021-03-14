@@ -10,18 +10,18 @@ import java.util.List;
 public interface TempRecordDao {
 
     /*临时日志前缀*/
-    public List<TempPreRecord> getPre();
+    public List<TempPreRecord> getPre(String username);
 
     public int insertPre(TempPreRecord tempPreRecord);
 
     public int updatePre(TempPreRecord tempPreRecord);
 
-    public int removePre();
+    public int removePre(String username);
 
     /*临时日志后缀*/
-    public List<TempSufRecord> getSuf();
+    public List<TempSufRecord> getSuf(String username);
 
-    public int getCountSuf();
+    public int getCountSuf(String username);
 
     public int insertSuf(TempSufRecord tempSufRecord);
 
@@ -29,5 +29,5 @@ public interface TempRecordDao {
 
     public int deleteSuf(int recordId);
 
-    public int removeSuf();
+    public int removeSuf(String username);
 }

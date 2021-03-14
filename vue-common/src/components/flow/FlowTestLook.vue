@@ -17,10 +17,10 @@
           </el-form-item>
         </el-form>
         <el-form :inline="true">
-          <el-form-item label="检测时间:">
+          <el-form-item :label="'\xa0\xa0'+'检测时间:'">
             <el-input v-model="testForm.testTime" disabled size="mini" style="width: 180px;"></el-input>
           </el-form-item>
-          <el-form-item label="检测地点:">
+          <el-form-item :label="'\xa0\xa0'+'检测地点:'">
             <el-input v-model="testForm.testPlace" disabled size="mini" style="width: 180px;"></el-input>
           </el-form-item>
         </el-form>
@@ -34,7 +34,7 @@
       <div>
         <br/>
         <div class="title"><u>No1.曲线</u></div>
-        <div id="myChartLook" :style="{width: '800px', height: '400px', marginLeft:'25px'}"></div>
+        <div :id="nowId" :style="{width: '800px', height: '400px', marginLeft:'25px'}"></div>
         <div class="title"><u>No2.参数</u></div>
         <br/>
         <div style="text-align: center">尿量(VV)：{{ testForm.vv }}ml&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最大尿流率(Qmax)：{{ testForm.qmax }}ml/s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;尿流时间(FT)：{{ testForm.ft }}s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;达峰时间(TQmax)：{{ testForm.tqmax }}s</div>
@@ -60,6 +60,14 @@ require("echarts/lib/component/legend");
 export default {
   name: "FlowTestLook",
   props:{
+    username:{
+      type:String,
+      default:''
+    },
+    nowId:{
+      type:String,
+      default:'0'
+    },
     nowTestForm:{
       type:Object,
       default:()=>{}
@@ -71,6 +79,7 @@ export default {
   },
   data() {
     return {
+      id:'',
       infoForm: {
         name: '',
         sex: '',
@@ -127,13 +136,13 @@ export default {
     }
   },
   mounted() {
-    let username = sessionStorage.getItem('username');
+    let username = this.username;
     let postData = this.qs.stringify({
       username: username
     });
     this.axios({
       method: 'post',
-      url: '/user/getInfo',
+      url: '/patient/getInfo',
       data: postData
     }).then(response => {
       this.infoForm.name = response.data.name;
@@ -142,6 +151,7 @@ export default {
     }).catch(error => {
       console.log(error);
     });
+    this.id=this.nowId;
     this.testForm=this.nowTestForm;
     this.flowData=this.nowFlowData;
     this.drawLineChart();
@@ -150,7 +160,7 @@ export default {
     //绘制曲线图
     drawLineChart() {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = echarts.init(document.getElementById('myChartLook'));
+      let myChart = echarts.init(document.getElementById(this.id));
       // 绘制基本图表
       myChart.setOption(this.option);
       //显示加载动画

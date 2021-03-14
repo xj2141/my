@@ -27,7 +27,7 @@
       <el-table-column type="selection"></el-table-column>
       <el-table-column :label="'姓名：'+infoForm.name+'\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+'性别：'+infoForm.sex+'\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'+'年龄：'+infoForm.age">
         <template slot-scope="scope">
-          <SecInTable :tableData="scope.row" :flowData="flowData[scope.$index]" :headData="headData[scope.$index]"></SecInTable>
+          <SecInTable :tableData="scope.row" :username="username" :nowId="'myChartLook'+scope.$index" :flowData="flowData[scope.$index]" :headData="headData[scope.$index]"></SecInTable>
         </template>
       </el-table-column>
     </el-table>
@@ -43,6 +43,7 @@ export default {
   },
   data(){
     return{
+      username:'',
       infoForm:{
         name:'',
         sex:'',
@@ -61,15 +62,17 @@ export default {
     getAll() {
       let postData = this.qs.stringify({
         firstDate: this.sFirstDate,
-        lastDate: this.sLastDate
+        lastDate: this.sLastDate,
+        username:sessionStorage.getItem('username')
       });
       this.axios({
         method: 'post',
-        url: '/record/getAll',
+        url: '/flowTest/get',
         data: postData
       }).then(response => {
         this.headData = response.data.pre;
-        this.tableData = response.data.suf;
+        this.tableData = response.data.test;
+        this.flowData=response.data.flow;
       }).catch(error => {
         console.log(error);
       });
@@ -80,9 +83,9 @@ export default {
       let val = this.multipleSelection;
       val.forEach((va, index) => {
         this.tableData.forEach((v, i) => {
-          if (va[0].recordId == v[0].recordId) {
+          if (va[0].testId == v[0].testId) {
             let now = this.headData[i];
-            dates.push(now.recordDate);
+            dates.push(now.testDate);
           }
         })
       });
@@ -92,24 +95,22 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      this.getDates();
     },
     removeBatch() {
-      console.log(this.multipleSelection);
       if (this.multipleSelection.length == 0) {
         this.$message.warning("请先勾选选项");
       } else {
-        this.$confirm('删除日志, 是否继续?', '提示', {
+        this.$confirm('删除尿流检测信息, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           let dates = this.getDates();
-          this.axios.post("/record/deleteAll", {dates: dates}).then(response => {
+          this.axios.post("/flowTest/delete", {dates: dates,username:sessionStorage.getItem('username')}).then(response => {
             this.getAll();
             this.$message({
               type: 'success',
-              message: '删除日志成功!'
+              message: '删除成功!'
             });
           }).catch(error => {
             console.log(error);
@@ -142,7 +143,7 @@ export default {
         console.log(dates);
         this.axios({
           method: 'post',
-          url: '/record/exportAll',
+          url: '/flowTest/export',
           data: {dates: dates, username: username},
           responseType: 'blob'
         }).then(response => {
@@ -150,7 +151,7 @@ export default {
           let blob = new Blob([response.data], {type: "application/vnd.ms-excel"});
           link.style.display = 'none';
           link.href = URL.createObjectURL(blob);
-          link.setAttribute('download', '排尿日志.xls');
+          link.setAttribute('download', '尿流检测信息.xls');
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -162,12 +163,13 @@ export default {
   },
   created() {
     let username=sessionStorage.getItem('username');
+    this.username=username;
     let postData=this.qs.stringify({
       username:username
     });
     this.axios({
       method:'post',
-      url:'/user/getInfo',
+      url:'/patient/getInfo',
       data:postData
     }).then(response=>{
       this.infoForm.name=response.data.name;

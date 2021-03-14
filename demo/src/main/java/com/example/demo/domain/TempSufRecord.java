@@ -2,6 +2,7 @@ package com.example.demo.domain;
 
 public class TempSufRecord {
     private int recordId;
+    private String username;
     private String flowTime;
     private String capacity;
     private String flowFastYN;
@@ -14,6 +15,14 @@ public class TempSufRecord {
 
     public void setRecordId(int recordId) {
         this.recordId = recordId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFlowTime() {
@@ -54,25 +63,5 @@ public class TempSufRecord {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    @Override
-    public String toString() {
-        return "TempSufRecord{" +
-                "recordId=" + recordId +
-                ", flowTime='" + flowTime + '\'' +
-                ", capacity='" + capacity + '\'' +
-                ", flowFastYN='" + flowFastYN + '\'' +
-                ", flowLeakYN='" + flowLeakYN + '\'' +
-                ", remark='" + remark + '\'' +
-                '}';
-    }
-
-    public TempSufRecord(){
-        this.flowTime="";
-        this.capacity="";
-        this.flowFastYN="";
-        this.flowLeakYN="";
-        this.remark="";
     }
 }

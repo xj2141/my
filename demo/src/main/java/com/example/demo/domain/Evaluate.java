@@ -2,6 +2,7 @@ package com.example.demo.domain;
 
 public class Evaluate {
     private int evaluateId;
+    private String username;
     private String evaluateDate;
     private String evaluateName;
     private String score;
@@ -13,6 +14,14 @@ public class Evaluate {
 
     public void setEvaluateId(int evaluateId) {
         this.evaluateId = evaluateId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEvaluateDate() {
@@ -48,6 +57,7 @@ public class Evaluate {
     }
 
     public Evaluate(){
+        this.username="";
         this.evaluateDate="";
         this.evaluateName="";
         this.score="";

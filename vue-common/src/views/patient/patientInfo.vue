@@ -6,7 +6,7 @@
     <div class="all">
     <el-form ref="infoForm" :model="infoForm" :rules="rules" label-width="100px">
       <el-form-item label="账号完善度">
-        <el-progress :percentage=completion style="width: 350px;margin-top: 12px"></el-progress>
+        <el-progress :percentage=completion style="width: 550px;margin-top: 12px"></el-progress>
       </el-form-item>
       <el-form-item label="姓名">
         <el-input name="name" type="text" v-model="infoForm.name" placeholder="请输入姓名"></el-input>
@@ -20,6 +20,25 @@
       <el-form-item label="电话" prop="phone">
         <el-input name="phone" type="text" v-model="infoForm.phone" placeholder="请输入电话"></el-input>
       </el-form-item>
+      <el-form-item label="主治医生">
+        <el-input
+          style="width:500px"
+          placeholder="请选择医生"
+          v-model="doctorName"
+          :suffix-icon="showTree?'el-icon-arrow-up':'el-icon-arrow-down'"
+          @click.native="deptogglePanel($event)"
+          readonly="readonly">
+        </el-input>
+        <div ref="tableList" v-if="renderComponent">
+          <el-popover
+            placement="bottom"
+            width="475"
+            trigger="manual"
+            v-model="showTree">
+            <Doctor @parentHandle="childSelect"></Doctor>
+          </el-popover>
+        </div>
+      </el-form-item>
       <el-form-item style="text-align: center">
         <el-button type="primary" @click="handleSubmit">保存</el-button>
         <el-button type="primary" @click="handleBack">返回</el-button>
@@ -30,8 +49,12 @@
 </template>
 
 <script>
+import Doctor from "@/components/inside/Doctor";
 export default{
   name:'info',
+  components:{
+    Doctor
+  },
   data(){
     let validateAge=(rule, value, callback) => {
       if (value !== '') {
@@ -52,6 +75,7 @@ export default{
       callback()
     }
     return{
+      renderComponent: true,
       infoForm:{
         username:'',
         name:'',
@@ -60,6 +84,9 @@ export default{
         phone:''
       },
       completion:0,
+      doctorName:'',
+      doctorId:'',
+      showTree:false,
       rules:{
         age:[
           {validator: validateAge, trigger: 'blur'}
@@ -71,20 +98,63 @@ export default{
     }
   },
   methods:{
+    forceRerender() {
+      // 从 DOM 中删除 my-component 组件
+      this.renderComponent = false;
+      this.$nextTick(() => {
+        // 在 DOM 中添加 my-component 组件
+        this.renderComponent = true;
+      });
+    },
+    // 点击input 阻止冒泡 控制table显示隐藏
+    deptogglePanel (event) {
+      event || (event = window.event)
+      event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true)
+      this.showTree ? this.tableHide() : this.tableShow()
+    },
+    tableShow() {
+      this.showTree = true
+      this.forceRerender();
+      document.addEventListener('click', this.tableHideList, false)
+    },
+    tableHide() {
+      this.showTree = false
+      document.addEventListener('click', this.tableHideList, false)
+    },
+    tableHideList(e) {
+      if (this.$refs.tableList&& !this.$refs.tableList.contains(e.target)) {
+        this.tableHide()
+      }
+    },
+    childSelect(data){
+      let names='';
+      data.forEach((va, index)=>{
+        names+=va.name;
+        if(index!=data.length-1){
+          names+='，';
+        }
+      });
+      this.doctorName=names;
+      let ids=data.map(item=>item.username).join();
+      this.doctorId=ids;
+      this.showTree=false;
+    },
     progress(){
       let num=0;
       if(this.infoForm.name!=''){
-        num+=25;
+        num+=20;
       }
       if(this.infoForm.sex!=''){
-        num+=25;
+        num+=20;
       }
       if(this.infoForm.age!=''){
-        console.log(this.infoForm.age);
-        num+=25;
+        num+=20;
       }
       if(this.infoForm.phone!=''){
-        num+=25;
+        num+=20;
+      }
+      if(this.doctorName!=''){
+        num+=20;
       }
       this.completion=num;
     },
@@ -100,13 +170,15 @@ export default{
             });
             this.axios({
               method:'post',
-              url:'/user/updateO',
+              url:'/patient/updateO',
               data:postData
             }).then(response=>{
               let status=response.data.status;
               if(status=="success"){
-                this.$message.success('个人信息修改成功');
-                this.progress();
+                this.axios.post("/connection/update", {patientId:sessionStorage.getItem('username'),ids:this.doctorId}).then(()=>{
+                  this.$message.success('个人信息修改成功');
+                  this.progress();
+                }).catch(()=>{});
               }else{
                 this.$message.error('个人信息修改失败');
               }
@@ -132,7 +204,7 @@ export default{
     });
     this.axios({
       method:'post',
-      url:'/user/getInfo',
+      url:'/patient/getInfo',
       data:postData
     }).then(response=>{
       let status=response.data.status;
@@ -148,6 +220,20 @@ export default{
     }).catch(error => {
       console.log(error);
     });
+    let tempData=this.qs.stringify({
+      patientId:sessionStorage.getItem('username')
+    })
+    this.axios.post('/connection/findByPatient', tempData).then(response=>{
+      let data=response.data;
+      if(data.length==0){
+        this.doctorName='';
+      }else{
+        let ids=data.map(item=>item.doctorId).join();
+        this.axios.post('/doctor/getAllName', {ids:ids}).then(response=>{
+          this.doctorName=response.data;
+        }).catch(()=>{});
+      }
+    }).catch(()=>{});
   }
 }
 </script>
@@ -160,9 +246,9 @@ export default{
   color: rgba(20, 20, 20, 1);
 }
 .all{
-  width:400px;
+  width:600px;
   margin-top: 4%;
-  margin-left: calc(calc(100vw - 750px) / 2); /** 动态居中 */
+  margin-left: calc(calc(100vw - 950px) / 2); /** 动态居中 */
   font-size: 20px;
 }
 </style>

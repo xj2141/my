@@ -2,10 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.PreRecord;
 import com.example.demo.domain.SufRecord;
-import com.example.demo.domain.User;
+import com.example.demo.domain.Patient;
 import com.example.demo.service.RecordService;
 import com.example.demo.service.TempRecordService;
-import com.example.demo.service.UserService;
+import com.example.demo.service.PatientService;
 import com.example.demo.utils.POIUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,15 +30,12 @@ public class RecordController {
     private TempRecordService tempRecordService;
 
     @Autowired
-    private SecTempRecordService secTempRecordService;
-
-    @Autowired
-    private UserService userService;
+    private PatientService patientService;
 
     @RequestMapping(value = "/getAll", method = RequestMethod.POST)
-    public Map<String, List> getAll(String firstDate, String lastDate) {
+    public Map<String, List> getAll(String firstDate, String lastDate, String username) {
         Map<String, List> map = new HashMap<String, List>();
-        List<PreRecord>pre=this.getPre(firstDate,lastDate);
+        List<PreRecord>pre=recordService.getPre(firstDate,lastDate,username);
         map.put("pre",pre);
         List<List<SufRecord>>suf=new ArrayList<>();
         List<SufRecord>tempSuf=new ArrayList<>();
@@ -47,7 +44,7 @@ public class RecordController {
         for(int i=0;i<pre.size();i++){
             beginId=pre.get(i).getBeginId();
             endId=pre.get(i).getEndId();
-            tempSuf=this.getSuf(beginId,endId);
+            tempSuf=recordService.getSuf(beginId,endId);
             suf.add(tempSuf);
         }
         map.put("suf",suf);
@@ -58,20 +55,22 @@ public class RecordController {
     public void deleteAll(@RequestBody HashMap<String,String> parasmap) {
         String dates=parasmap.get("dates");
         String []date=dates.split(",");
+        String username=parasmap.get("username");
         int beginId=0;
         int endId=0;
         for(int i=0;i<date.length;i++){
-            beginId=recordService.getPreByDate(date[i]).getBeginId();
-            endId=recordService.getPreByDate(date[i]).getEndId();
-            this.removeSuf(beginId,endId);
+            beginId=recordService.getPreByDate(date[i],username).getBeginId();
+            endId=recordService.getPreByDate(date[i],username).getEndId();
+            recordService.removeSuf(beginId,endId);
         }
-        this.removePre(date);
+        recordService.removePre(date,username);
     }
 
     @RequestMapping(value = "/exportAll", method = RequestMethod.POST)
     public void exportAll(@RequestBody HashMap<String,String> parasmap, HttpServletResponse response) {
         String dates=parasmap.get("dates");
         String []date=dates.split(",");
+        String username=parasmap.get("username");
         List<PreRecord>pre=new ArrayList<>();
         PreRecord tempPre=new PreRecord();
         List<List<SufRecord>>suf=new ArrayList<>();
@@ -79,31 +78,25 @@ public class RecordController {
         int beginId=0;
         int endId=0;
         for(int i=0;i<date.length;i++){
-            tempPre=recordService.getPreByDate(date[i]);
+            tempPre=recordService.getPreByDate(date[i],username);
             pre.add(tempPre);
             beginId=tempPre.getBeginId();
             endId=tempPre.getEndId();
-            tempSuf=this.getSuf(beginId,endId);
+            tempSuf=recordService.getSuf(beginId,endId);
             suf.add(tempSuf);
         }
-        String username=parasmap.get("username");
         String []info=new String[3];
-        User user=userService.findByUsername(username);
-        info[0]=user.getName();
-        info[1]=user.getSex();
-        info[2]=user.getAge();
+        Patient patient = patientService.findByUsername(username);
+        info[0]= patient.getName();
+        info[1]= patient.getSex();
+        info[2]= patient.getAge();
         POIUtil.exportRecord(info,pre,suf,response);
     }
 
-    @RequestMapping(value = "/getPre", method = RequestMethod.POST)
-    public List<PreRecord> getPre(String firstDate, String lastDate){
-        return recordService.getPre(firstDate,lastDate);
-    }
-
     @RequestMapping(value = "/findByDate", method = RequestMethod.POST)
-    public Map<String, Object> findByDate(String recordDate) {
+    public Map<String, Object> findByDate(String recordDate,String username) {
         Map<String, Object> map = new HashMap<String, Object>();
-        if (recordService.getPreByDate(recordDate) != null) {
+        if (recordService.getPreByDate(recordDate,username) != null) {
             map.put("status", "error");
         } else {
             map.put("status", "success");
@@ -113,54 +106,19 @@ public class RecordController {
 
     @RequestMapping(value = "/insertTempPre", method = RequestMethod.POST)
     public int insertTempPre(PreRecord preRecord){
-        int count=tempRecordService.getCountSuf();
-        System.out.println(count);
+        String username=preRecord.getUsername();
+        int count=tempRecordService.getCountSuf(username);
         int last=recordService.getLastIdSuf();
         int first=last-count+1;
         preRecord.setBeginId(first);
         preRecord.setEndId(last);
         int result= recordService.insertPre(preRecord);
         return result;
-    }
-
-    @RequestMapping(value = "/insertPre", method = RequestMethod.POST)
-    public int insertPre(PreRecord preRecord){
-        int count=secTempRecordService.getCount();
-        System.out.println(count);
-        int last=recordService.getLastIdSuf();
-        int first=last-count+1;
-        preRecord.setBeginId(first);
-        preRecord.setEndId(last);
-        int result= recordService.insertPre(preRecord);
-        return result;
-    }
-
-    @RequestMapping(value = "/removePre", method = RequestMethod.POST)
-    public int removePre(String []date){
-        int result= recordService.removePre(date);
-        return result;
-    }
-
-    @RequestMapping(value = "/getSuf", method = RequestMethod.POST)
-    public List<SufRecord> getSuf(Integer beginId, Integer endId){
-        return recordService.getSuf(beginId,endId);
     }
 
     @RequestMapping(value = "/insertTempSuf", method = RequestMethod.POST)
-    public int insertTempSuf(){
-        int result= recordService.insertTempSuf();
-        return result;
-    }
-
-    @RequestMapping(value = "/insertSuf", method = RequestMethod.POST)
-    public int insertSuf(){
-        int result= recordService.insertSuf();
-        return result;
-    }
-
-    @RequestMapping(value = "/removeSuf", method = RequestMethod.POST)
-    public int removeSuf(Integer beginId, Integer endId){
-        int result= recordService.removeSuf(beginId,endId);
+    public int insertTempSuf(String username){
+        int result= recordService.insertTempSuf(username);
         return result;
     }
 }

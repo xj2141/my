@@ -6,6 +6,7 @@
 
     <resultMap id="result" type="com.example.demo.domain.Evaluate">
         <id property="evaluateId" column="evaluateId" />
+        <result property="username" column="username"/>
         <result property="evaluateDate" column="evaluateDate"/>
         <result property="evaluateName" column="evaluateName"/>
         <result property="score" column="score"/>
@@ -14,24 +15,25 @@
 
     <select id="findByEvaluate" resultMap="result" parameterType="com.example.demo.domain.Evaluate">
         select * from evaluate
-        where evaluateDate=#{evaluateDate} and evaluateName=#{evaluateName}
+        where evaluateDate=#{evaluateDate} and evaluateName=#{evaluateName} and username=#{username}
     </select>
 
     <select id="queryPage" resultMap="result">
         select * from evaluate
-        where evaluateName like concat(concat('%',#{evaluateName}),'%')
+        where evaluateName like concat(concat('%',#{evaluateName}),'%') and username=#{username}
         order by evaluateId asc
         limit #{startRows},#{pageSize}
     </select>
 
     <select id="getRowCount" resultType="Integer">
         select count(*) from evaluate
-        where evaluateName like concat(concat('%',#{evaluateName}),'%')
+        where evaluateName like concat(concat('%',#{evaluateName}),'%') and username=#{username}
     </select>
 
     <insert id="insert" parameterType="com.example.demo.domain.Evaluate">
-        insert into evaluate(evaluateDate,evaluateName,score,conclusion)
+        insert into evaluate(username,evaluateDate,evaluateName,score,conclusion)
         values(
+        #{username,jdbcType=VARCHAR},
         #{evaluateDate,jdbcType=VARCHAR},
         #{evaluateName,jdbcType=VARCHAR},
         #{score,jdbcType=VARCHAR},
@@ -54,7 +56,7 @@
     <update id="update" parameterType="com.example.demo.domain.Evaluate">
         update evaluate
         set score=#{score},conclusion=#{conclusion}
-        where evaluateDate=#{evaluateDate} and evaluateName=#{evaluateName}
+        where evaluateDate=#{evaluateDate} and evaluateName=#{evaluateName} and username=#{username}
     </update>
 
 </mapper>

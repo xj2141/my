@@ -6,6 +6,7 @@
 
     <resultMap id="resultPre" type="com.example.demo.domain.TempPreRecord">
         <id property="recordId" column="recordId" />
+        <result property="username" column="username" />
         <result property="recordDate" column="recordDate" />
         <result property="wakeTime" column="wakeTime"/>
         <result property="sleepTime" column="sleepTime"/>
@@ -13,6 +14,7 @@
 
     <resultMap id="resultSuf" type="com.example.demo.domain.TempSufRecord">
         <id property="recordId" column="recordId" />
+        <result property="username" column="username" />
         <result property="flowTime" column="flowTime"/>
         <result property="capacity" column="capacity"/>
         <result property="flowFastYN" column="flowFastYN"/>
@@ -22,11 +24,13 @@
 
     <select id="getPre" resultMap="resultPre">
         select * from tempPreRecord
+        where username=#{username}
     </select>
 
     <insert id="insertPre" parameterType="com.example.demo.domain.TempPreRecord">
-        insert into tempPreRecord(recordDate,wakeTime,sleepTime)
+        insert into tempPreRecord(username,recordDate,wakeTime,sleepTime)
         values (
+        #{username,jdbcType=VARCHAR},
         #{recordDate,jdbcType=VARCHAR},
         #{wakeTime,jdbcType=VARCHAR},
         #{sleepTime,jdbcType=VARCHAR}
@@ -36,23 +40,28 @@
     <update id="updatePre" parameterType="com.example.demo.domain.TempPreRecord">
         update tempPreRecord
         set recordDate=#{recordDate},wakeTime=#{wakeTime},sleepTime=#{sleepTime}
+        where username=#{username}
     </update>
 
     <delete id="removePre">
-        truncate table tempPreRecord
+        delete from tempPreRecord
+        where username=#{username}
     </delete>
 
     <select id="getSuf" resultMap="resultSuf">
         select * from tempSufRecord
+        where username=#{username}
     </select>
 
     <select id="getCountSuf" resultType="Integer">
         select count(*) from tempSufRecord
+        where username=#{username}
     </select>
 
     <insert id="insertSuf" parameterType="com.example.demo.domain.TempSufRecord">
-        insert into tempSufRecord(flowTime,capacity,flowFastYN,flowLeakYN,remark)
+        insert into tempSufRecord(username,flowTime,capacity,flowFastYN,flowLeakYN,remark)
         values (
+        #{username,jdbcType=VARCHAR},
         #{flowTime,jdbcType=VARCHAR},
         #{capacity,jdbcType=VARCHAR},
         #{flowFastYN,jdbcType=VARCHAR},
@@ -73,6 +82,7 @@
     </delete>
 
     <delete id="removeSuf">
-        truncate table tempSufRecord
+        delete from tempSufRecord
+        where username=#{username}
     </delete>
 </mapper>

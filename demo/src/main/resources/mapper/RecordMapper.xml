@@ -5,6 +5,8 @@
 <mapper namespace="com.example.demo.dao.RecordDao">
 
     <resultMap id="resultPre" type="com.example.demo.domain.PreRecord">
+        <id property="id" column="id" />
+        <result property="username" column="username" />
         <result property="recordDate" column="recordDate" />
         <result property="wakeTime" column="wakeTime"/>
         <result property="sleepTime" column="sleepTime"/>
@@ -23,18 +25,19 @@
 
     <select id="getPre" resultMap="resultPre">
         select * from preRecord
-        where recordDate between #{firstDate} AND #{lastDate}
+        where username=#{username} and recordDate between #{firstDate} AND #{lastDate}
         order by recordDate asc
     </select>
 
     <select id="getPreByDate" resultMap="resultPre" parameterType="String">
         select * from preRecord
-        where recordDate=#{recordDate}
+        where recordDate=#{recordDate} and username=#{username}
     </select>
 
     <insert id="insertPre" parameterType="com.example.demo.domain.PreRecord">
-        insert into preRecord(recordDate,wakeTime,sleepTime,beginId,endId)
+        insert into preRecord(username,recordDate,wakeTime,sleepTime,beginId,endId)
         values (
+        #{username,jdbcType=VARCHAR},
         #{recordDate,jdbcType=VARCHAR},
         #{wakeTime,jdbcType=VARCHAR},
         #{sleepTime,jdbcType=VARCHAR},
@@ -43,9 +46,9 @@
         )
     </insert>
 
-    <delete id="removePre">
-        delete from preRecord where recordDate in
-        <foreach collection="array" item="recordDate" open="(" separator="," close=")">
+    <delete id="removePre" parameterType="java.util.Map">
+        delete from preRecord where username=#{username} and recordDate in
+        <foreach collection="dates" item="recordDate" open="(" separator="," close=")">
             #{recordDate}
         </foreach>
     </delete>
@@ -63,12 +66,9 @@
 
     <insert id="insertTempSuf">
         insert into sufRecord(flowTime,capacity,flowFastYN,flowLeakYN,remark)
-        select flowTime,capacity,flowFastYN,flowLeakYN,remark from tempSufRecord
-    </insert>
-
-    <insert id="insertSuf">
-        insert into sufRecord(flowTime,capacity,flowFastYN,flowLeakYN,remark)
-        select flowTime,capacity,flowFastYN,flowLeakYN,remark from secTempRecord
+        select flowTime,capacity,flowFastYN,flowLeakYN,remark
+        from tempSufRecord
+        where username=#{username}
     </insert>
 
     <delete id="removeSuf">

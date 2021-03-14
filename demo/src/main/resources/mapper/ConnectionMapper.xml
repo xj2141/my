@@ -1,0 +1,51 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD com.example.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.ConnectionDao">
+
+    <resultMap id="result" type="com.example.demo.domain.Connection">
+        <id property="id" column="id"/>
+        <result property="doctorId" column="doctorId" />
+        <result property="patientId" column="patientId"/>
+    </resultMap>
+
+    <select id="getByDoctor" resultMap="result" parameterType="String">
+        select * from connection
+        where doctorId=#{doctorId}
+    </select>
+
+    <select id="findByPatient" resultMap="result" parameterType="String">
+        select * from connection
+        where patientId=#{patientId}
+    </select>
+
+    <select id="findByConnection" resultMap="result" parameterType="com.example.demo.domain.Connection">
+        select * from connection
+        where doctorId=#{doctorId} and patientId=#{patientId}
+    </select>
+
+    <insert id="insert" parameterType="com.example.demo.domain.Connection">
+        insert into connection(doctorId,patientId)
+        values(
+        #{doctorId,jdbcType=VARCHAR},
+        #{patientId,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.example.demo.domain.Connection">
+        update connection
+        set doctorId=#{doctorId},patientId=#{patientId}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteByDoctor" parameterType="String">
+        delete from connection
+        where doctorId=#{doctorId}
+    </delete>
+
+    <delete id="deleteByPatient" parameterType="String">
+        delete from connection
+        where patientId=#{patientId}
+    </delete>
+</mapper>

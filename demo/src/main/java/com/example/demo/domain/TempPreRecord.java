@@ -3,6 +3,7 @@ package com.example.demo.domain;
 public class TempPreRecord {
 
     private int recordId;
+    private String username;
     private String recordDate;
     private String wakeTime;
     private String sleepTime;
@@ -13,6 +14,14 @@ public class TempPreRecord {
 
     public void setRecordId(int recordId) {
         this.recordId = recordId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getRecordDate() {

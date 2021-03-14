@@ -208,6 +208,7 @@ export default {
           this.clear();
 
           let postData = this.qs.stringify({
+            username:sessionStorage.getItem('username'),
             evaluateDate: this.evaluateForm.evaluateDate,
             evaluateName: this.evaluateForm.evaluateName,
             score: this.evaluateForm.score,

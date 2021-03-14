@@ -18,8 +18,8 @@ public class TempRecordController {
     private TempRecordService tempRecordService;
 
     @RequestMapping(value = "/getPre", method = RequestMethod.POST)
-    public List<TempPreRecord> getPre(){
-        return tempRecordService.getPre();
+    public List<TempPreRecord> getPre(String username){
+        return tempRecordService.getPre(username);
     }
 
     @RequestMapping(value = "/insertPre", method = RequestMethod.POST)
@@ -35,24 +35,24 @@ public class TempRecordController {
     }
 
     @RequestMapping(value = "/removePre", method = RequestMethod.POST)
-    public int removePre(){
-        int result= tempRecordService.removePre();
+    public int removePre(String username){
+        int result= tempRecordService.removePre(username);
         return result;
     }
 
     @RequestMapping(value = "/getSuf", method = RequestMethod.POST)
-    public List<TempSufRecord> getSuf(){
-        return tempRecordService.getSuf();
+    public List<TempSufRecord> getSuf(String username){
+        System.out.println(username);
+        return tempRecordService.getSuf(username);
     }
 
     @RequestMapping(value = "/getCountSuf", method = RequestMethod.POST)
-    public int getCountSuf(){
-        return tempRecordService.getCountSuf();
+    public int getCountSuf(String username){
+        return tempRecordService.getCountSuf(username);
     }
 
     @RequestMapping(value = "/insertSuf", method = RequestMethod.POST)
     public int insertSuf(TempSufRecord tempSufRecord){
-        System.out.println(tempSufRecord.toString());
         int result= tempRecordService.insertSuf(tempSufRecord);
         return result;
     }
@@ -71,8 +71,8 @@ public class TempRecordController {
     }
 
     @RequestMapping(value = "/removeSuf", method = RequestMethod.POST)
-    public int removeSuf(){
-        int result= tempRecordService.removeSuf();
+    public int removeSuf(String username){
+        int result= tempRecordService.removeSuf(username);
         return result;
     }
 }

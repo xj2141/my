@@ -81,13 +81,6 @@ export default{
           label:'生命质量量表(SF-36)'
         }
       ],
-      evaluateForm:{
-        evaluateId:'',
-        evaluateDate:'',
-        evaluateName:'',
-        score:'',
-        conclusion:''
-      },
       tableData: [],
       search:'',
       nowSearch:'',
@@ -176,7 +169,8 @@ export default{
     },
     getRows() {
       let postData = this.qs.stringify({
-        evaluateName:this.nowSearch
+        evaluateName:this.nowSearch,
+        username:sessionStorage.getItem('username')
       });
       this.axios({
         method: 'post',
@@ -195,11 +189,12 @@ export default{
       this.handleCurrentChange();
     },
     handleCurrentChange() {
-      console.log(`当前页: ${this.currentPage}`);
+      // console.log(`当前页: ${this.currentPage}`);
       let postData = this.qs.stringify({
         page: this.currentPage,
         pageSize:this.pageSize,
-        evaluateName:this.nowSearch
+        evaluateName:this.nowSearch,
+        username:sessionStorage.getItem('username')
       });
       this.axios({
         method: 'post',
@@ -208,7 +203,6 @@ export default{
       }).then(response =>
       {
         this.tableData = response.data;
-        console.log(this.tableData[1].conclusion);
       }).catch(error =>
       {
         console.log(error);

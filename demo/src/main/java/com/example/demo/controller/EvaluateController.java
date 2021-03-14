@@ -17,17 +17,17 @@ public class EvaluateController {
 
     @RequestMapping(value = "/page", method = RequestMethod.POST)
     @ResponseBody
-    public List<Evaluate> page(Integer page,Integer pageSize,String evaluateName){
+    public List<Evaluate> page(Integer page,Integer pageSize,String evaluateName,String username){
         int pageNow = page == null ? 1 : page;
         int startRows = pageSize*(pageNow-1);
-        List<Evaluate> list= evaluateService.queryPage(pageSize,startRows,evaluateName);
+        List<Evaluate> list= evaluateService.queryPage(pageSize,startRows,evaluateName,username);
         return list;
     }
 
     @RequestMapping(value = "/rows", method = RequestMethod.POST)
     @ResponseBody
-    public int rows(String evaluateName){
-        int re=evaluateService.getRowCount(evaluateName);
+    public int rows(String evaluateName,String username){
+        int re=evaluateService.getRowCount(evaluateName,username);
         return re;
     }
 

@@ -81,13 +81,14 @@ export default {
   },
   data() {
     return {
-      addResult:false,
       infoForm: {
         name: '',
         sex: '',
         age: ''
       },
       testForm: {
+        testId:'',
+        username:'',
         testDate: '',
         testTime: '',
         testPlace: '',
@@ -156,7 +157,7 @@ export default {
     });
     this.axios({
       method: 'post',
-      url: '/user/getInfo',
+      url: '/patient/getInfo',
       data: postData
     }).then(response => {
       this.infoForm.name = response.data.name;
@@ -232,6 +233,8 @@ export default {
     },
     cancel(){
       this.testForm={
+          testId:'',
+          username:'',
           testDate: '',
           testTime: '',
           testPlace: '',
@@ -269,11 +272,11 @@ export default {
                 url: '/tempFlowTest/insertTest',
                 data: {tempTest:tempTest,count:count}
               }).then(response => {
+                this.$emit("parentHandle");
               }).catch(error => {});
             }).catch(error => {
               console.log(error);
             });
-            this.addResult=true;
           }
         } else {
           this.$message({

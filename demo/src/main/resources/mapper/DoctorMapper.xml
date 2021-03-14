@@ -1,0 +1,82 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD com.example.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.DoctorDao">
+
+    <resultMap id="result" type="com.example.demo.domain.Doctor">
+        <result property="username" column="username" />
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="phone" column="phone"/>
+        <result property="hospital" column="hospital"/>
+        <result property="department" column="department"/>
+        <result property="professionTitle" column="professionTitle"/>
+        <result property="profession" column="profession"/>
+    </resultMap>
+
+    <select id="queryPage" resultMap="result">
+        select * from doctor
+        where name like concat(concat('%',#{name}),'%')
+        order by name asc
+        limit #{startRows},#{pageSize}
+    </select>
+
+    <select id="getRowCount" resultType="Integer">
+        select count(*) from doctor
+        where name like concat(concat('%',#{name}),'%')
+    </select>
+
+    <select id="getAllName" resultMap="result">
+        select * from doctor where username in
+        <foreach collection="array" item="username" open="(" separator="," close=")">
+            #{username}
+        </foreach>
+    </select>
+
+    <select id="findByUsername" resultMap="result" parameterType="String">
+        select * from doctor
+        where username=#{username}
+    </select>
+
+    <select id="findByUser" resultMap="result">
+        select * from doctor
+        where username=#{username} and password=#{password}
+    </select>
+
+    <insert id="insert" parameterType="com.example.demo.domain.Doctor">
+        insert into doctor(username,password,name,sex,age,phone,hospital,department,professionTitle,profession)
+        values(
+        #{username,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR},
+        #{sex,jdbcType=VARCHAR},
+        #{age,jdbcType=VARCHAR},
+        #{phone,jdbcType=VARCHAR},
+        #{hospital,jdbcType=VARCHAR},
+        #{department,jdbcType=VARCHAR},
+        #{professionTitle,jdbcType=VARCHAR},
+        #{profession,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <delete id="delete" parameterType="String">
+        delete from doctor
+        where username=#{username}
+    </delete>
+
+    <update id="updateO" parameterType="com.example.demo.domain.Doctor">
+        update doctor
+        set name=#{name},sex=#{sex},age=#{age},phone=#{phone},hospital=#{hospital},department=#{department},professionTitle=#{professionTitle},profession=#{profession}
+        where username=#{username}
+    </update>
+
+    <update id="updateP" parameterType="com.example.demo.domain.Doctor">
+        update doctor
+        set password=#{password}
+        where username=#{username}
+    </update>
+
+</mapper>

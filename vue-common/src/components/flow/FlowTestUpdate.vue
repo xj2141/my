@@ -85,13 +85,14 @@ export default {
   },
   data() {
     return {
-      updateResult:false,
       infoForm: {
         name: '',
         sex: '',
         age: ''
       },
       testForm: {
+        testId:'',
+        username:'',
         testDate: '',
         testTime: '',
         testPlace: '',
@@ -160,7 +161,7 @@ export default {
     });
     this.axios({
       method: 'post',
-      url: '/user/getInfo',
+      url: '/patient/getInfo',
       data: postData
     }).then(response => {
       this.infoForm.name = response.data.name;
@@ -239,6 +240,8 @@ export default {
     },
     cancel(){
       this.testForm={
+        testId:'',
+        username:'',
         testDate: '',
         testTime: '',
         testPlace: '',
@@ -260,6 +263,7 @@ export default {
             this.$message.error("无尿流率测定数据，修改失败")
           }else{
             let postData=this.qs.stringify(this.testForm);
+            console.log(postData)
             let params = {
               params: this.flowData
             };
@@ -275,10 +279,11 @@ export default {
                   method: 'post',
                   url: '/tempFlowTest/updateTest',
                   data: {tempTest:tempTest,count:count}
-                }).then(response => {}).catch(error => {});
+                }).then(response => {
+                  this.$emit("parentHandle");
+                }).catch(error => {});
               }).catch(error => {});
             }).catch(error=>{});
-            this.updateResult=true;
           }
         } else {
           this.$message({

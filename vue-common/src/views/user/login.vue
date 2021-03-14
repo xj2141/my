@@ -142,11 +142,19 @@ export default {
           }).then(response => {
             let status = response.data.status;
             if (status === 'success') {
+              let role=response.data.role;
               sessionStorage.setItem('token', 'true');
+              sessionStorage.setItem("role",role);
               sessionStorage.setItem('username', this.loginForm.username);
-              this.$router.push({
-                path: '/'
-              });
+              if(role=='doctor'){
+                this.$router.push({
+                  path: '/doctorHome'
+                });
+              }else{
+                this.$router.push({
+                  path: '/'
+                });
+              }
             } else {
               this.$message.error('用户名或密码错误');
               this.createCode();

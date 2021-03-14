@@ -14,16 +14,16 @@ public class TempFlowTestService {
     @Autowired
     private TempFlowTestDao tempFlowTestDao;
 
-    public int updateDate(String testDate){
-        return tempFlowTestDao.updateDate(testDate);
+    public int updateDate(String username,String testDate){
+        return tempFlowTestDao.updateDate(username,testDate);
     }
 
-    public List<TempTest> getTest(){
-        return tempFlowTestDao.getTest();
+    public List<TempTest> getTest(String username){
+        return tempFlowTestDao.getTest(username);
     }
 
-    public int getCountTest(){
-        return tempFlowTestDao.getCountTest();
+    public int getCountTest(String username){
+        return tempFlowTestDao.getCountTest(username);
     }
 
     public int insertTest(TempTest tempTest){
@@ -38,8 +38,8 @@ public class TempFlowTestService {
         return tempFlowTestDao.deleteTest(testId);
     }
 
-    public int removeTest(){
-        return tempFlowTestDao.removeTest();
+    public int removeTest(String username){
+        return tempFlowTestDao.removeTest(username);
     }
 
     public List<TempFlow> getFlow(Integer beginId, Integer endId){
@@ -56,9 +56,5 @@ public class TempFlowTestService {
 
     public int deleteFlow(Integer beginId, Integer endId){
         return tempFlowTestDao.deleteFlow(beginId, endId);
-    }
-
-    public int removeFlow(){
-        return tempFlowTestDao.removeFlow();
     }
 }

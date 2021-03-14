@@ -18,12 +18,12 @@ const constantRouterMap=[
   },
   {
     path:'/',
-    name:'home',
+    name:'patientHome',
     meta: {
       requireAuth: true
     },
     redirect:'index',
-    component:()=>import('@/views/home'),
+    component:()=>import('@/views/user/patientHome'),
     children:[
       {
         //首页
@@ -32,7 +32,7 @@ const constantRouterMap=[
         meta: {
           requireAuth: true
         },
-        component:()=>import('@/views/index')
+        component:()=>import('@/views/patient/index')
       },
       {
         //量表历史记录
@@ -72,21 +72,21 @@ const constantRouterMap=[
       },
       {
         //个人信息
-        path:'/userInfo',
+        path:'/patientInfo',
         name:'个人信息',
         meta: {
           requireAuth: true
         },
-        component:()=>import('@/views/user/userInfo')
+        component:()=>import('@/views/patient/patientInfo')
       },
       {
         //修改密码
-        path:'/changePwd',
+        path:'/changePatientPwd',
         name:'修改密码',
         meta: {
           requireAuth: true
         },
-        component:()=>import('@/views/user/changePwd')
+        component:()=>import('@/views/patient/changePatientPwd')
       },
       {
         //历史日志
@@ -125,6 +125,42 @@ const constantRouterMap=[
         component:()=>import('@/views/flowTest/todayTest')
       }
     ]
+  },
+  {
+    //个人信息
+    path:'/doctorInfo',
+    name:'个人信息',
+    meta: {
+      requireAuth: true
+    },
+    component:()=>import('@/views/doctor/doctorInfo')
+  },
+  {
+    //修改密码
+    path:'/changeDoctorPwd',
+    name:'修改密码',
+    meta: {
+      requireAuth: true
+    },
+    component:()=>import('@/views/doctor/changeDoctorPwd')
+  },
+  {
+    //病情分析
+    path:'/Analyze',
+    name:'Analyze',
+    meta: {
+      requireAuth: true
+    },
+    component:()=>import('@/components/inside/Analyze')
+  },
+  {
+    //医生首页
+    path:'/doctorHome',
+    name:'首页',
+    meta: {
+      requireAuth: true
+    },
+    component:()=>import('@/views/user/doctorHome')
   }
 ]
 

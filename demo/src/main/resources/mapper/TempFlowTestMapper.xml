@@ -6,6 +6,7 @@
 
     <resultMap id="resultTest" type="com.example.demo.domain.TempTest">
         <id property="testId" column="testId" />
+        <result property="username" column="username" />
         <result property="testDate" column="testDate" />
         <result property="testTime" column="testTime"/>
         <result property="testPlace" column="testPlace"/>
@@ -24,21 +25,26 @@
         <result property="time" column="time"/>
     </resultMap>
 
-    <update id="updateDate" parameterType="String">
+    <update id="updateDate">
         update tempTest
         set testDate=#{testDate}
+        where username=#{username}
     </update>
+
     <select id="getTest" resultMap="resultTest">
         select * from tempTest
+        where username=#{username}
     </select>
 
     <select id="getCountTest" resultType="Integer">
         select count(*) from tempTest
+        where username=#{username}
     </select>
 
     <insert id="insertTest" parameterType="com.example.demo.domain.TempTest">
-        insert into tempTest(testDate,testTime,testPlace,vv,qmax,ft,tqmax,flowBeginId,flowEndId,conclusion)
+        insert into tempTest(username,testDate,testTime,testPlace,vv,qmax,ft,tqmax,flowBeginId,flowEndId,conclusion)
         values (
+        #{username,jdbcType=VARCHAR},
         #{testDate,jdbcType=VARCHAR},
         #{testTime,jdbcType=VARCHAR},
         #{testPlace,jdbcType=VARCHAR},
@@ -64,7 +70,8 @@
     </delete>
 
     <delete id="removeTest">
-        truncate table tempTest
+        delete from tempTest
+        where username=#{username}
     </delete>
 
     <select id="getFlow" resultMap="resultFlow">
@@ -92,9 +99,5 @@
     <delete id="deleteFlow">
         delete from tempFlow
         where id between #{beginId} and #{endId}
-    </delete>
-
-    <delete id="removeFlow">
-        truncate table tempFlow
     </delete>
 </mapper>

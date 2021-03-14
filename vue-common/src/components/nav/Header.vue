@@ -19,24 +19,37 @@ export default {
   name: 'Header',
   data(){
     return{
+      role:'',
       username:''
     }
   },
   methods: {
     handleCommand(command) {
-      if(command==='a'){
-        this.$router.push('/userInfo')
-      }else if(command==='b'){
-        this.$router.push('/changePwd')
-      }else if(command==='c'){
-        this.$store.state.openTab = [];
-        this.$store.state.activeIndex = '/index';
-        sessionStorage.setItem("token", 'false');
-        this.$router.push('/login')
+      if(this.role=='patient'){
+        if(command==='a'){
+          this.$router.push('/patientInfo')
+        }else if(command==='b'){
+          this.$router.push('/changePatientPwd')
+        }else if(command==='c'){
+          this.$store.state.openTab = [];
+          this.$store.state.activeIndex = '/index';
+          sessionStorage.setItem("token", 'false');
+          this.$router.push('/login')
+        }
+      }else if(this.role=='doctor'){
+        if(command==='a'){
+          this.$router.push('/doctorInfo')
+        }else if(command==='b'){
+          this.$router.push('/changeDoctorPwd')
+        }else if(command==='c'){
+          sessionStorage.setItem("token", 'false');
+          this.$router.push('/login')
+        }
       }
     }
   },
   mounted() {
+    this.role=sessionStorage.getItem('role');
     this.username=sessionStorage.getItem('username');
   }
 }

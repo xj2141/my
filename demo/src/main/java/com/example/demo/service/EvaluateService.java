@@ -17,12 +17,12 @@ public class EvaluateService {
         return evaluateDao.findByEvaluate(evaluate);
     }
 
-    public List<Evaluate> queryPage(Integer pageSize, Integer startRows, String evaluateName){
-        return evaluateDao.queryPage(pageSize,startRows,evaluateName);
+    public List<Evaluate> queryPage(Integer pageSize, Integer startRows, String evaluateName, String username){
+        return evaluateDao.queryPage(pageSize,startRows,evaluateName,username);
     }
 
-    public int getRowCount(String evaluateName){
-        return evaluateDao.getRowCount(evaluateName);
+    public int getRowCount(String evaluateName, String username){
+        return evaluateDao.getRowCount(evaluateName,username);
     }
 
     public int insert(Evaluate evaluate){

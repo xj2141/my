@@ -3,26 +3,9 @@ package com.example.demo.domain;
 public class TempTest {
 
     private int testId;
+    private String username;
     private String testDate;
     private String testTime;
-
-    @Override
-    public String toString() {
-        return "TempTest{" +
-                "testId=" + testId +
-                ", testDate='" + testDate + '\'' +
-                ", testTime='" + testTime + '\'' +
-                ", testPlace='" + testPlace + '\'' +
-                ", vv='" + vv + '\'' +
-                ", qmax='" + qmax + '\'' +
-                ", ft='" + ft + '\'' +
-                ", tqmax='" + tqmax + '\'' +
-                ", flowBeginId=" + flowBeginId +
-                ", flowEndId=" + flowEndId +
-                ", conclusion='" + conclusion + '\'' +
-                '}';
-    }
-
     private String testPlace;
     private String vv;
     private String qmax;
@@ -38,6 +21,14 @@ public class TempTest {
 
     public void setTestId(int testId) {
         this.testId = testId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getTestDate() {

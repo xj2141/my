@@ -6,7 +6,8 @@
       text-color="#333"
       :default-active="$route.path"
       router
-    >
+      @open="handleOpen"
+      @close="handleClose">
       <NavMenu :navMenus="menuData"></NavMenu>
     </el-menu>
 <!--    <router-view></router-view>-->
@@ -25,7 +26,7 @@ export default {
         {
           //一级
           entity: {
-            id: 0,
+            id: '0',
             icon: "el-icon-message",
             name: "首页",
             value:"/index"
@@ -34,7 +35,7 @@ export default {
         {
           //一级
           entity: {
-            id: 10,
+            id: '1',
             icon: "el-icon-menu",
             name: "尿流检测"
           },
@@ -42,7 +43,7 @@ export default {
           childs: [
             {
               entity: {
-                id: 11,
+                id: '1-1',
                 icon: "el-icon-phone-outline\r\n",
                 name: "历史检测信息",
                 value: "/pastTest"
@@ -50,7 +51,7 @@ export default {
             },
             {
               entity: {
-                id: 12,
+                id: '1-2',
                 icon: "el-icon-phone-outline\r\n",
                 name: "记录检测信息",
                 value: "/todayTest"
@@ -61,7 +62,7 @@ export default {
         {
           //一级
           entity: {
-            id: 7,
+            id: '2',
             icon: "el-icon-menu",
             name: "排尿日志"
           },
@@ -69,7 +70,7 @@ export default {
           childs: [
             {
               entity: {
-                id: 8,
+                id: '2-1',
                 icon: "el-icon-phone-outline\r\n",
                 name: "历史日志",
                 value: "/pastRcd"
@@ -77,7 +78,7 @@ export default {
             },
             {
               entity: {
-                id: 9,
+                id: '2-2',
                 icon: "el-icon-phone-outline\r\n",
                 name: "记录日志",
                 value: "/todayRcd"
@@ -88,7 +89,7 @@ export default {
         {
           //一级
           entity: {
-            id: 4,
+            id: '3',
             icon: "el-icon-news",
             name: "量表"
           },
@@ -96,7 +97,7 @@ export default {
           childs: [
             {
               entity: {
-                id: 40,
+                id: '3-1',
                 icon: "el-icon-phone-outline\r\n",
                 name: "历史记录",
                 value: "/evaluate"
@@ -104,7 +105,7 @@ export default {
             },
             {
               entity: {
-                id: 41,
+                id: '3-2',
                 icon: "el-icon-phone-outline\r\n",
                 name: "评测",
                 value: ""
@@ -113,7 +114,7 @@ export default {
               childs: [
                 {
                   entity: {
-                    id: 42,
+                    id: '3-2-1',
                     icon: "el-icon-service\r\n",
                     name: "IPSS",
                     value: "/IPSS"
@@ -121,7 +122,7 @@ export default {
                 },
                 {
                   entity: {
-                    id: 43,
+                    id: '3-2-2',
                     icon: "el-icon-service\r\n",
                     name: "OABSS",
                     value: "/OABSS"
@@ -129,7 +130,7 @@ export default {
                 },
                 {
                   entity: {
-                    id: 44,
+                    id: '3-2-3',
                     icon: "el-icon-service\r\n",
                     name: "SF-36",
                     value: "/SF-36"
@@ -141,6 +142,14 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
+    }
   }
 };
 </script>

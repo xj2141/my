@@ -14,8 +14,8 @@ public class TempRecordService {
     @Autowired
     private TempRecordDao tempRecordDao;
 
-    public List<TempPreRecord> getPre(){
-        return tempRecordDao.getPre();
+    public List<TempPreRecord> getPre(String username){
+        return tempRecordDao.getPre(username);
     }
 
     public int insertPre(TempPreRecord tempPreRecord){
@@ -26,16 +26,16 @@ public class TempRecordService {
         return tempRecordDao.updatePre(tempPreRecord);
     }
 
-    public int removePre(){
-        return tempRecordDao.removePre();
+    public int removePre(String username){
+        return tempRecordDao.removePre(username);
     }
 
-    public List<TempSufRecord> getSuf(){
-        return tempRecordDao.getSuf();
+    public List<TempSufRecord> getSuf(String username){
+        return tempRecordDao.getSuf(username);
     }
 
-    public int getCountSuf(){
-        return tempRecordDao.getCountSuf();
+    public int getCountSuf(String username){
+        return tempRecordDao.getCountSuf(username);
     }
 
     public int insertSuf(TempSufRecord tempSufRecord){
@@ -50,7 +50,7 @@ public class TempRecordService {
         return tempRecordDao.deleteSuf(recordId);
     }
 
-    public int removeSuf(){
-        return tempRecordDao.removeSuf();
+    public int removeSuf(String username){
+        return tempRecordDao.removeSuf(username);
     }
 }

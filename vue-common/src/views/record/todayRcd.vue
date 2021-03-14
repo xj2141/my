@@ -140,6 +140,7 @@ export default {
       },
       tempSufRcdAForm:{
         recordId:'',
+        username:'',
         flowTime:'',
         capacity:'',
         flowFastYN:'',
@@ -148,6 +149,7 @@ export default {
       },
       tempSufRcdUForm:{
         recordId:'',
+        username:'',
         flowTime:'',
         capacity:'',
         flowFastYN:'',
@@ -213,12 +215,17 @@ export default {
       this.$set(this.tempPreRcdForm, "recordDate", defaultDate);
     },
     updatePre(){
+      let username=sessionStorage.getItem('username');
       let postData=this.qs.stringify({
+        username:username,
         recordDate:this.tempPreRcdForm.recordDate,
         wakeTime:this.tempPreRcdForm.wakeTime,
         sleepTime:this.tempPreRcdForm.sleepTime
       });
-      this.axios.post('/tempRecord/getPre').then(response=>{
+      let tempData=this.qs.stringify({
+        username:username
+      });
+      this.axios.post('/tempRecord/getPre',tempData).then(response=>{
         let first=response.data;
         if(first.length==0){
           this.axios({
@@ -264,13 +271,16 @@ export default {
         let postData = this.qs.stringify({
           recordId: row.recordId,
         });
+        let tempData=this.qs.stringify({
+          username:sessionStorage.getItem('username')
+        });
         this.axios({
           method: 'post',
           url:'/tempRecord/deleteSuf',
           data:postData
         }).then(response =>
         {
-          this.axios.post('/tempRecord/getSuf').then(response=>{
+          this.axios.post('/tempRecord/getSuf',tempData).then(response=>{
             this.tableData = response.data;
             this.$message({
               type: 'success',
@@ -331,21 +341,26 @@ export default {
       this.dialogUpdate = false;
     },
     addRecord(){
+      let username=sessionStorage.getItem('username');
       this.$refs.tempSufRcdAForm.validate(valid => {
         if (valid) {
           let postData = this.qs.stringify({
+            username: username,
             flowTime: this.tempSufRcdAForm.flowTime,
             capacity: this.tempSufRcdAForm.capacity,
             flowFastYN:this.tempSufRcdAForm.flowFastYN,
             flowLeakYN:this.tempSufRcdAForm.flowLeakYN,
             remark:this.tempSufRcdAForm.remark
           });
+          let tempData=this.qs.stringify({
+            username:username
+          });
           this.axios({
             method: 'post',
             url: '/tempRecord/insertSuf',
             data: postData
           }).then(response => {
-            this.axios.post('/tempRecord/getSuf').then(response=>{
+            this.axios.post('/tempRecord/getSuf',tempData).then(response=>{
               this.tableData = response.data;
               this.$message({
                 type: 'success',
@@ -365,15 +380,20 @@ export default {
       });
     },
     updateRecord(){
+      let username=sessionStorage.getItem('username');
       this.$refs.tempSufRcdUForm.validate(valid => {
         if (valid) {
           let postData = this.qs.stringify({
             recordId: this.tempSufRcdUForm.recordId,
+            username:username,
             flowTime: this.tempSufRcdUForm.flowTime,
             capacity: this.tempSufRcdUForm.capacity,
             flowFastYN:this.tempSufRcdUForm.flowFastYN,
             flowLeakYN:this.tempSufRcdUForm.flowLeakYN,
             remark:this.tempSufRcdUForm.remark
+          });
+          let tempData=this.qs.stringify({
+            username:username
           });
           console.log(postData);
           this.axios({
@@ -381,7 +401,7 @@ export default {
             url: '/tempRecord/updateSuf',
             data: postData
           }).then(response => {
-            this.axios.post('/tempRecord/getSuf').then(response=>{
+            this.axios.post('/tempRecord/getSuf',tempData).then(response=>{
               this.tableData=response.data;
               this.$message({
                 type: 'success',
@@ -401,8 +421,11 @@ export default {
       });
     },
     clear(){
-      this.axios.post('/tempRecord/removePre').then(res=>{}).catch(err=>{});
-      this.axios.post('tempRecord/removeSuf').then(res=>{}).catch(err=>{});
+      let postData=this.qs.stringify({
+        username:sessionStorage.getItem('username')
+      });
+      this.axios.post('/tempRecord/removePre',postData).then(res=>{}).catch(err=>{});
+      this.axios.post('tempRecord/removeSuf',postData).then(res=>{}).catch(err=>{});
       this.getNowTime();
       this.tempPreRcdForm.wakeTime='';
       this.tempPreRcdForm.sleepTime='';
@@ -416,10 +439,10 @@ export default {
       });
     },
     submit(){
+      let username=sessionStorage.getItem('username');
       this.$refs.tempPreRcdForm.validate(valid => {
         if (valid) {
-          this.axios.post('/tempRecord/getSuf').then(response=>{
-            let result=response.data;
+            let result=this.tableData;
             if(result.length==0){
               this.$message({
                 type:'error',
@@ -427,7 +450,8 @@ export default {
               });
             }else {
               let postData=this.qs.stringify({
-                recordDate:this.tempPreRcdForm.recordDate
+                recordDate:this.tempPreRcdForm.recordDate,
+                username:username
               });
               this.axios({
                 method: 'post',
@@ -436,23 +460,25 @@ export default {
               }).then(response => {
                 let status = response.data.status;
                 if (status == "success") {
-                  this.axios.post('/record/insertTempSuf').then(res=>{}).catch(err=>{});
-                  let data=this.qs.stringify({
+                  let data1=this.qs.stringify({
+                    username:username
+                  });
+                  let data2=this.qs.stringify({
+                    username:username,
                     recordDate:this.tempPreRcdForm.recordDate,
                     wakeTime:this.tempPreRcdForm.wakeTime,
                     sleepTime:this.tempPreRcdForm.sleepTime
                   });
-                  this.axios({
-                    method: 'post',
-                    url: '/record/insertTempPre',
-                    data: data
-                  }).then(response => {
-                    console.log(response);
-                  }).catch(error => {
-                    console.log(error);
-                  });
-                  this.$message.success('提交成功');
-                  this.clear();
+                  this.axios.post('/record/insertTempSuf',data1).then(res=>{
+                    this.axios({
+                      method: 'post',
+                      url: '/record/insertTempPre',
+                      data: data2
+                    }).then(response => {
+                      this.$message.success('提交成功');
+                      this.clear();
+                    }).catch(error => {});
+                  }).catch(err=>{});
                 } else {
                   this.$message.error('此日日志已存在，请先删除旧日志');
                 }
@@ -460,7 +486,6 @@ export default {
                 console.log(error);
               });
             }
-          })
         } else {
           this.$message({
             type:'error',
@@ -473,9 +498,11 @@ export default {
     }
   },
   created(){
-    this.axios.post('/tempRecord/getPre').then(response=>{
+    let postData=this.qs.stringify({
+      username:sessionStorage.getItem('username')
+    });
+    this.axios.post('/tempRecord/getPre',postData).then(response=>{
       let first=response.data;
-      console.log(first.length);
       if(first.length==0){
         this.getNowTime();
       }else{
@@ -488,7 +515,7 @@ export default {
       console.log(error);
     });
 
-    this.axios.post('/tempRecord/getSuf').then(response=>{
+    this.axios.post('/tempRecord/getSuf',postData).then(response=>{
       this.tableData=response.data;
     }).catch(error =>
     {

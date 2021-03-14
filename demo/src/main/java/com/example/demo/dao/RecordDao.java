@@ -6,27 +6,26 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface RecordDao {
 
     /*日志前缀*/
-    public List<PreRecord> getPre(@Param("firstDate")String firstDate, @Param("lastDate")String lastDate);
+    public List<PreRecord> getPre(@Param("firstDate")String firstDate, @Param("lastDate")String lastDate, @Param("username") String username);
 
-    public PreRecord getPreByDate(String recordDate);
+    public PreRecord getPreByDate(@Param("recordDate")String recordDate, @Param("username") String username);
 
     public int insertPre(PreRecord preRecord);
 
-    public int removePre(String []recordDate);
+    public int removePre(Map<String, Object> params);
 
     /*日志后缀*/
     public List<SufRecord> getSuf(@Param("beginId")Integer beginId,@Param("endId")Integer endId);
 
     public int getLastIdSuf();
 
-    public int insertTempSuf();
-
-    public int insertSuf();
+    public int insertTempSuf(@Param("username") String username);
 
     public int removeSuf(@Param("beginId")Integer beginId,@Param("endId")Integer endId);
 }

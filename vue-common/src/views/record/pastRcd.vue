@@ -60,7 +60,8 @@ export default {
     getAll() {
       let postData = this.qs.stringify({
         firstDate: this.sFirstDate,
-        lastDate: this.sLastDate
+        lastDate: this.sLastDate,
+        username:sessionStorage.getItem('username')
       });
       this.axios({
         method: 'post',
@@ -104,7 +105,7 @@ export default {
           type: 'warning'
         }).then(() => {
           let dates = this.getDates();
-          this.axios.post("/record/deleteAll", {dates: dates}).then(response => {
+          this.axios.post("/record/deleteAll", {dates: dates,username:sessionStorage.getItem('username')}).then(response => {
             this.getAll();
             this.$message({
               type: 'success',
@@ -166,7 +167,7 @@ export default {
     });
     this.axios({
       method:'post',
-      url:'/user/getInfo',
+      url:'/patient/getInfo',
       data:postData
     }).then(response=>{
         this.infoForm.name=response.data.name;

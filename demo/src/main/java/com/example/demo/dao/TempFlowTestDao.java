@@ -10,12 +10,12 @@ import java.util.List;
 @Mapper
 public interface TempFlowTestDao {
 
-    public int updateDate(String testDate);
+    public int updateDate(@Param("username") String username,@Param("testDate") String testDate);
 
     //尿流检测
-    public List<TempTest> getTest();
+    public List<TempTest> getTest(String username);
 
-    public int getCountTest();
+    public int getCountTest(String username);
 
     public int insertTest(TempTest tempTest);
 
@@ -23,7 +23,7 @@ public interface TempFlowTestDao {
 
     public int deleteTest(int testId);
 
-    public int removeTest();
+    public int removeTest(String username);
 
     //尿流率数据
     public List<TempFlow> getFlow(@Param("beginId")Integer beginId, @Param("endId")Integer endId);
@@ -33,6 +33,4 @@ public interface TempFlowTestDao {
     public int insertFlow(List<TempFlow>tempFlows);
 
     public int deleteFlow(@Param("beginId")Integer beginId, @Param("endId")Integer endId);
-
-    public int removeFlow();
 }

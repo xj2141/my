@@ -23,9 +23,9 @@
           <span>{{ scope.row.conclusion }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right">
+      <el-table-column label="操作" fixed="right" width="100px">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleLook(scope.$index,scope.row)">查看</el-button>
+          <el-button size="mini" @click="handleLook(scope.$index,scope.row)">详情</el-button>
         </template>
       </el-table-column>
     </el-table-column>
@@ -34,7 +34,7 @@
     <el-form label-width="100px" class="demo-form" size="mini">
       <el-dialog :append-to-body='true' :visible.sync="dialogLook" width="1000px"
                  :before-close="handleCloseLook" center>
-        <FlowTestLook v-if="renderComponentLook" :nowTestForm="testForm" :nowFlowData="flowForm"></FlowTestLook>
+        <FlowTestLook v-if="renderComponentLook" :username=username :nowId="nowId" :nowTestForm="testForm" :nowFlowData="flowForm"></FlowTestLook>
       </el-dialog>
     </el-form>
   </div>
@@ -49,6 +49,14 @@ export default {
     FlowTestLook
   },
   props: {
+    username:{
+      type:String,
+      default:''
+    },
+    nowId:{
+      type:String,
+      default:'0'
+    },
     tableData: {
       type: Array,
       default: () => {
