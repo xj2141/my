@@ -146,9 +146,13 @@ export default {
               sessionStorage.setItem('token', 'true');
               sessionStorage.setItem("role",role);
               sessionStorage.setItem('username', this.loginForm.username);
-              if(role=='doctor'){
+              if(role=='admin'){
                 this.$router.push({
-                  path: '/doctorHome'
+                  path: '/admin'
+                });
+              }else if(role=='doctor'){
+                this.$router.push({
+                  path: '/home'
                 });
               }else{
                 this.$router.push({

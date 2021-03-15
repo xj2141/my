@@ -28,17 +28,26 @@ public class UserController {
     @ResponseBody
     public Map<String, Object> login(String username, String password) {
         Map<String, Object> map = new HashMap<String, Object>();
-        String target = MD5Util.md5(username + password);
-        Doctor doctor=doctorService.findByUser(username,target);
-        Patient patient=patientService.findByUser(username,target);
-        if (doctor == null&&patient==null) {
-            map.put("status", "error");
-        } else {
-            map.put("status", "success");
-            if(doctor!=null){
-                map.put("role","doctor");
+        if(username.equals("admin")){
+            if(password.equals("@xjj1115")){
+                map.put("status", "success");
+                map.put("role","admin");
             }else{
-                map.put("role","patient");
+                map.put("status", "error");
+            }
+        }else{
+            String target = MD5Util.md5(username + password);
+            Doctor doctor=doctorService.findByUser(username,password);
+            Patient patient=patientService.findByUser(username,target);
+            if (doctor == null&&patient==null) {
+                map.put("status", "error");
+            } else {
+                map.put("status", "success");
+                if(doctor!=null){
+                    map.put("role","doctor");
+                }else{
+                    map.put("role","patient");
+                }
             }
         }
         return map;
@@ -47,7 +56,7 @@ public class UserController {
     @RequestMapping(value = "/regist", method = RequestMethod.POST)
     public Map<String, Object> regist(String username, String password) {
         Map<String, Object> map = new HashMap<String, Object>();
-        if (doctorService.findByUsername(username)!=null||patientService.findByUsername(username) != null) {
+        if (username.equals("admin")||doctorService.findByUsername(username)!=null||patientService.findByUsername(username) != null) {
             map.put("status", "error");
             map.put("msg", "用户名已存在");
         } else {

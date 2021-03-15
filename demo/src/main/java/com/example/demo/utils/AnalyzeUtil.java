@@ -2,6 +2,7 @@ package com.example.demo.utils;
 
 import com.example.demo.domain.Test;
 
+//尿流率分析
 public class AnalyzeUtil {
 
     public static Test analyze(){

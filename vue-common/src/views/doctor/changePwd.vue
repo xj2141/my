@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-top: 80px">
     <div class="title">
       <span>修改密码</span>
     </div>
@@ -16,7 +16,6 @@
         </el-form-item>
         <el-form-item style="text-align: center">
           <el-button type="primary" @click="handleSubmit">提交</el-button>
-          <el-button type="primary" @click="handleBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -136,11 +135,6 @@ export default{
           return false;
         }
       });
-    },
-    handleBack(){
-      this.$router.push({
-        path:"/"
-      });
     }
   }
 }
@@ -156,7 +150,7 @@ export default{
 .all{
   width:300px;
   margin-top: 3%;
-  margin-left: calc(calc(100vw - 550px) / 2); /** 动态居中 */
+  margin-left: calc(calc(100vw - 350px) / 2); /** 动态居中 */
   font-size: 20px;
 }
 </style>

@@ -34,7 +34,7 @@
     <el-form label-width="100px" class="demo-form" size="mini">
       <el-dialog :append-to-body='true' :visible.sync="dialogLook" width="1000px"
                  :before-close="handleCloseLook" center>
-        <FlowTestLook v-if="renderComponentLook" :username=username :nowId="nowId" :nowTestForm="testForm" :nowFlowData="flowForm"></FlowTestLook>
+        <FlowTestLook v-if="renderComponentLook" :username="username" :nowId="nowId" :nowTestForm="testForm" :nowFlowData="flowForm"></FlowTestLook>
       </el-dialog>
     </el-form>
   </div>

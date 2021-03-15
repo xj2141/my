@@ -1,0 +1,72 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD com.example.Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.UserDao">
+
+    <resultMap id="result" type="com.example.demo.domain.User">
+        <result property="username" column="username" />
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="phone" column="phone"/>
+        <result property="hospital" column="hospital"/>
+        <result property="department" column="department"/>
+        <result property="professionTitle" column="professionTitle"/>
+        <result property="profession" column="profession"/>
+        <result property="state" column="state"/>
+    </resultMap>
+
+    <select id="queryPage" resultMap="result">
+        select * from user
+        where username like concat(concat('%',#{username}),'%') and state like concat(concat('%',#{state}),'%')
+        order by username asc
+        limit #{startRows},#{pageSize}
+    </select>
+
+    <select id="getRowCount" resultType="Integer">
+        select count(*) from user
+        where username like concat(concat('%',#{username}),'%') and state like concat(concat('%',#{state}),'%')
+    </select>
+
+    <select id="findByUsername" resultMap="result">
+        select * from user
+        where username=#{username}
+    </select>
+
+    <insert id="insert" parameterType="java.util.List">
+        insert into user(username,password,state)
+        values
+        <foreach collection="list"  item="item" index="index" separator=",">
+            (
+            #{item.username,jdbcType=VARCHAR},
+            #{item.password,jdbcType=VARCHAR},
+            #{item.state,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="updateOne" parameterType="com.example.demo.domain.User">
+        update user
+        set password=#{password},name=#{name},sex=#{sex},age=#{age},phone=#{phone},hospital=#{hospital},department=#{department},professionTitle=#{professionTitle},profession=#{profession}
+        where username=#{username}
+    </insert>
+
+    <update id="update" parameterType="java.util.Map">
+        update user
+        set state=#{state}
+        where username in
+        <foreach collection="usernames" item="username" open="(" separator="," close=")">
+            #{username}
+        </foreach>
+    </update>
+
+    <delete id="delete">
+        delete from user where username in
+        <foreach collection="array" item="username" open="(" separator="," close=")">
+            #{username}
+        </foreach>
+    </delete>
+
+</mapper>

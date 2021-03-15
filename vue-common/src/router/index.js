@@ -17,6 +17,16 @@ const constantRouterMap=[
     component:()=>import('@/views/user/regist')
   },
   {
+    //管理员首页
+    path:'/admin',
+    name:'首页',
+    meta: {
+      requireAuth: true,
+      requireRole:'admin'
+    },
+    component:()=>import('@/views/user/adminHome')
+  },
+  {
     path:'/',
     name:'patientHome',
     meta: {
@@ -30,7 +40,8 @@ const constantRouterMap=[
         path:'index',
         name:'首页',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
         component:()=>import('@/views/patient/index')
       },
@@ -39,7 +50,8 @@ const constantRouterMap=[
         path:'evaluate',
         name:'历史记录',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
         component:()=>import('@/views/evaluate/evaluate')
       },
@@ -48,7 +60,8 @@ const constantRouterMap=[
         path:'IPSS',
         name:'IPSS',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
         component:()=>import('@/views/evaluate/IPSS')
       },
@@ -57,7 +70,8 @@ const constantRouterMap=[
         path:'OABSS',
         name:'OABSS',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
         component:()=>import('@/views/evaluate/OABSS')
       },
@@ -66,34 +80,38 @@ const constantRouterMap=[
         path:'SF-36',
         name:'SF-36',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
         component:()=>import('@/views/evaluate/SF-36')
       },
       {
         //个人信息
-        path:'/patientInfo',
+        path:'/userInfo',
         name:'个人信息',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
-        component:()=>import('@/views/patient/patientInfo')
+        component:()=>import('@/views/patient/userInfo')
       },
       {
         //修改密码
-        path:'/changePatientPwd',
+        path:'/changePwd',
         name:'修改密码',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
-        component:()=>import('@/views/patient/changePatientPwd')
+        component:()=>import('@/views/patient/changePwd')
       },
       {
         //历史日志
         path:'/pastRcd',
         name:'历史日志',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
         component:()=>import('@/views/record/pastRcd')
       },
@@ -102,7 +120,8 @@ const constantRouterMap=[
         path:'/todayRcd',
         name:'记录日志',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
         component:()=>import('@/views/record/todayRcd')
       },
@@ -111,7 +130,8 @@ const constantRouterMap=[
         path:'/pastTest',
         name:'历史检测信息',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
         component:()=>import('@/views/flowTest/pastTest')
       },
@@ -120,47 +140,54 @@ const constantRouterMap=[
         path:'/todayTest',
         name:'记录检测信息',
         meta: {
-          requireAuth: true
+          requireAuth: true,
+          requireRole:'patient'
         },
         component:()=>import('@/views/flowTest/todayTest')
       }
     ]
   },
   {
-    //个人信息
-    path:'/doctorInfo',
-    name:'个人信息',
-    meta: {
-      requireAuth: true
-    },
-    component:()=>import('@/views/doctor/doctorInfo')
-  },
-  {
-    //修改密码
-    path:'/changeDoctorPwd',
-    name:'修改密码',
-    meta: {
-      requireAuth: true
-    },
-    component:()=>import('@/views/doctor/changeDoctorPwd')
-  },
-  {
-    //病情分析
-    path:'/Analyze',
-    name:'Analyze',
-    meta: {
-      requireAuth: true
-    },
-    component:()=>import('@/components/inside/Analyze')
-  },
-  {
-    //医生首页
-    path:'/doctorHome',
+    //医生系统
+    path:'/home',
     name:'首页',
     meta: {
       requireAuth: true
     },
-    component:()=>import('@/views/user/doctorHome')
+    redirect:'/home/index',
+    component:()=>import('@/views/user/doctorHome'),
+    children:[
+      {
+        //医生首页
+        path:'/home/index',
+        name:'首页',
+        meta: {
+          requireAuth: true,
+          requireRole:'doctor'
+        },
+        component:()=>import('@/views/doctor/index')
+      },
+      {
+        //个人信息
+        path:'/home/userInfo',
+        name:'个人信息',
+        meta: {
+          requireAuth: true,
+          requireRole:'doctor'
+        },
+        component:()=>import('@/views/doctor/userInfo')
+      },
+      {
+        //修改密码
+        path:'/home/changePwd',
+        name:'修改密码',
+        meta: {
+          requireAuth: true,
+          requireRole:'doctor'
+        },
+        component:()=>import('@/views/doctor/changePwd')
+      }
+    ]
   }
 ]
 
@@ -172,7 +199,13 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
     if (sessionStorage.getItem("token") == 'true') { // 判断本地是否存在token
-      next()
+      if(sessionStorage.getItem("role")==to.meta.requireRole){
+        next()
+      }else{
+        next({
+          path: from.path
+        })
+      }
     } else {
       // 未登录,跳转到登陆页面
       next({

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-top: 80px">
     <div class="title">
       <span>个人信息</span>
     </div>
@@ -36,7 +36,6 @@
         </el-form-item>
         <el-form-item style="text-align: center">
           <el-button type="primary" @click="handleSubmit">保存</el-button>
-          <el-button type="primary" @click="handleBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -151,11 +150,6 @@ export default{
           return false;
         }
       });
-    },
-    handleBack(){
-      this.$router.push({
-        path:"/"
-      });
     }
   },
   created(){
@@ -199,7 +193,7 @@ export default{
 .all{
   width:400px;
   margin-top: 4%;
-  margin-left: calc(calc(100vw - 750px) / 2); /** 动态居中 */
+  margin-left: calc(calc(100vw - 530px) / 2); /** 动态居中 */
   font-size: 20px;
 }
 </style>
