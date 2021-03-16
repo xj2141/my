@@ -116,9 +116,9 @@ export default{
                   let status=response.data.status;
                   if(status=="success"){
                     this.$message.success('密码修改成功');
-                    this.$router.push({
-                      path:"/"
-                    });
+                    this.pwdForm.oldPwd='';
+                    this.pwdForm.newPwd='';
+                    this.pwdForm.snewPwd='';
                   }else{
                     this.$message.error('密码修改失败');
                   }

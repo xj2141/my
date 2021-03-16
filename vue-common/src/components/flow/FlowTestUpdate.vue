@@ -23,6 +23,10 @@
           </el-form-item>
           <el-form-item label="检测地点:" prop="testPlace">
             <el-input v-model="testForm.testPlace" placeholder="请输入内容" size="mini" style="width: 180px;"></el-input>
+            <span>&nbsp;&nbsp;</span>
+          </el-form-item>
+          <el-form-item label="排尿量:" prop="vv">
+            <el-input v-model.number="testForm.vv" placeholder="请输入内容" size="mini" style="width: 180px;" @change="analyzeAgain" oninput="value=value.replace(/[^\d]/g, '')"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -39,7 +43,7 @@
           :on-success="onSuccess"
           :on-error="onError"
           :disabled="importDisabled"
-          action="/file/analyze">
+          action="/file/get">
           <el-button size="small" :disabled="importDisabled" type="success" :icon="importDataIcon">
             {{ importDataText }}
           </el-button>
@@ -114,6 +118,9 @@ export default {
           {required: true, message: '必填项', trigger: 'blur'}
         ],
         testPlace: [
+          {required: true, message: '必填项', trigger: 'blur'}
+        ],
+        vv: [
           {required: true, message: '必填项', trigger: 'blur'}
         ]
       },
@@ -210,6 +217,28 @@ export default {
         myChart = null;
       }, 100);
     },
+    analyzeAgain() {
+      if (this.flowData.length != 0) {
+        if (this.testForm.vv=='') {
+          this.$message.warning("请先输入排尿量");
+        } else {
+          this.analyze();
+        }
+      }
+    },
+    analyze(){
+      let ids = {
+        params: this.flowData
+      };
+      let flows=JSON.stringify(ids);
+      this.axios.post('/file/analyze',{flows:flows,vv:this.testForm.vv}).then(response=>{
+        let test=response.data;
+        this.testForm.qmax=test.qmax;
+        this.testForm.ft=test.ft;
+        this.testForm.tqmax=test.tqmax;
+        this.testForm.conclusion=test.conclusion;
+      }).catch(()=>{});
+    },
     onError() {
       this.importDataText = '获取数据';
       this.importDataIcon = 'el-icon-upload2'
@@ -224,19 +253,20 @@ export default {
       this.importDataIcon = 'el-icon-upload2'
       this.importDisabled = false;
       this.$message.success("获取数据成功！");
-      this.flowData = res.flow;
+      console.log(res)
+      this.flowData = res;
       this.drawLineChart();
-      let test = res.test[0];
-      this.testForm.vv = test.vv;
-      this.testForm.qmax = test.qmax;
-      this.testForm.ft = test.ft;
-      this.testForm.tqmax = test.tqmax;
-      this.testForm.conclusion = test.conclusion;
+      this.analyze();
     },
     beforeUpload() {
-      this.importDataText = '正在获取';
-      this.importDisabled = true;
-      this.importDataIcon = 'el-icon-loading';
+      if(this.testForm.vv==''){
+        this.$message.warning("请先输入排尿量");
+        return false;
+      }else{
+        this.importDataText = '正在获取';
+        this.importDisabled = true;
+        this.importDataIcon = 'el-icon-loading';
+      }
     },
     cancel(){
       this.testForm={
@@ -288,7 +318,7 @@ export default {
         } else {
           this.$message({
             type:'error',
-            message:'星号为必填项'
+            message:'必填项不能为空'
           });
           console.log("参数验证不合法！");
         }

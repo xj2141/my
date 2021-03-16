@@ -41,11 +41,6 @@
         )
     </insert>
 
-    <delete id="delete" parameterType="int">
-        delete from evaluate
-        where evaluateId=#{evaluateId}
-    </delete>
-
     <delete id="remove">
         delete from evaluate where evaluateId in
         <foreach collection="array" item="id" open="(" separator="," close=")">

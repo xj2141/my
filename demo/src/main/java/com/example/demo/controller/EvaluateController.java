@@ -31,13 +31,6 @@ public class EvaluateController {
         return re;
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ResponseBody
-    public Integer delete(Integer evaluateId) {
-        int result = evaluateService.delete(evaluateId);
-        return result;
-    }
-
     //批量删除
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
     @ResponseBody

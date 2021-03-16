@@ -205,13 +205,19 @@
       </el-form>
     </div>
 
-    <el-dialog title="评测结果" :visible.sync="dialogVisible" width="30%">
-      <span>得分<br/></span>
-      <span>{{ evaluateForm.score }}<br/></span>
-      <span>结论<br/></span>
-      <span>{{ evaluateForm.conclusion }}<br/></span>
+    <el-dialog :append-to-body='true' :visible.sync="dialogVisible" width="30%" :before-close="handleClose" center>
+      <template slot="title">
+        <div style="font-size: 21px">评测结果</div>
+      </template>
+      <div class="title"><u>得分</u></div>
+      <br/>
+      <div class="content">{{ evaluateForm.score }}</div>
+      <br/>
+      <div class="title"><u>结论</u></div>
+      <br/>
+      <div class="content">{{ evaluateForm.conclusion }}</div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="cancel">确定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -713,11 +719,6 @@ export default {
       }
       return systemDate;
     },
-    clear() {
-      for (var key in this.question) {
-        this.question[key] = '';
-      }
-    },
     scrollToTop(node) {
       const ChildHasError = Array.from(node.querySelectorAll('.is-error'))
       if (!ChildHasError.length) throw new Error('有错误，但是找不到错误位置')
@@ -739,7 +740,6 @@ export default {
           let message = '九项评价指标满分均为1，得分越高，提示健康状况越好';
           this.evaluateForm.conclusion = message;
           this.dialogVisible = true;
-          this.clear();
 
           let postData = this.qs.stringify({
             username:sessionStorage.getItem('username'),
@@ -770,19 +770,40 @@ export default {
           return false;
         }
       });
+    },
+    cancel(){
+      this.dialogVisible=false;
+      for (var key in this.question) {
+        this.question[key] = '';
+      }
+    },
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          this.cancel();
+          done();
+        })
+        .catch(_ => {
+        });
     }
   }
 }
 </script>
 
 <style scoped>
+.title {
+  font-size: 20px;
+  color: rgb(90, 41, 41);
+}
+.content {
+  font-size: 16px;
+}
 .title1 {
   text-align: center;
   margin-top: 1%;
   font-size: 28px;
   color: rgba(20, 20, 20, 1);
 }
-
 .title2 {
   width: 750px;
   margin-top: 2%;
@@ -790,7 +811,6 @@ export default {
   font-size: 16px;
   color: rgba(20, 20, 20, 1);
 }
-
 .all {
   width: 750px;
   margin-left: calc(calc(100vw - 1010px) / 2); /** 动态居中 */

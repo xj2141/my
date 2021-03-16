@@ -38,18 +38,13 @@
           <span>{{ scope.row.conclusion }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right">
-        <template slot-scope="scope">
-          <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(scope.$index,scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
     </el-table>
 
     <div class="pages">
       <el-pagination
         :current-page.sync="currentPage"
         layout="total,sizes,prev,pager,next,jumper"
-        :page-sizes="[2, 10, 30, 50, 100]"
+        :page-sizes="[10, 30, 50, 100]"
         :page-size.sync="pageSize"
         :total="total"
         @size-change="handleSizeChange"
@@ -85,7 +80,7 @@ export default{
       search:'',
       nowSearch:'',
       multipleSelection:[],
-      pageSize: 2,
+      pageSize: 10,
       currentPage: 1,
       total: 0
     }
@@ -131,41 +126,6 @@ export default{
           });
         });
       }
-    },
-    handleDelete(index, row) {
-      console.log(index, row);
-      this.$confirm('删除操作, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        let postData = this.qs.stringify({
-          evaluateId: row.evaluateId,
-        });
-        this.axios({
-          method: 'post',
-          url:'/evaluate/delete',
-          data:postData
-        }).then(response =>
-        {
-          this.getRows();
-          this.currentPage=1;
-          this.handleCurrentChange();
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-          console.log(response);
-        }).catch(error =>
-        {
-          console.log(error);
-        });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });
-      });
     },
     getRows() {
       let postData = this.qs.stringify({

@@ -130,10 +130,6 @@ public class DoctorController {
     @RequestMapping(value = "/updateP", method = RequestMethod.POST)
     public Map<String, Object> updateP(Doctor doctor) {
         Map<String, Object> map = new HashMap<String, Object>();
-        String username = doctor.getUsername();
-        String password = doctor.getPassword();
-        String target = MD5Util.md5(username + password);
-        doctor.setPassword(target);
         int result = doctorService.updateP(doctor);
         if (result >= 1) {
             map.put("status", "success");

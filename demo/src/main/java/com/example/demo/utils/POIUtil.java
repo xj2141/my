@@ -1,9 +1,6 @@
 package com.example.demo.utils;
 
-import com.example.demo.domain.Flow;
-import com.example.demo.domain.PreRecord;
-import com.example.demo.domain.SufRecord;
-import com.example.demo.domain.Test;
+import com.example.demo.domain.*;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -237,7 +234,7 @@ public class POIUtil {
         Font ztFont = workbook.createFont();
         ztFont.setFontName("宋体");
         ztFont.setBold(true);
-        ztFont.setFontHeightInPoints((short)11);
+        ztFont.setFontHeightInPoints((short) 11);
         ztStyle.setFont(ztFont);
 
         //创建表单
@@ -309,8 +306,8 @@ public class POIUtil {
             Cell c0 = r0.createCell(0);
             c0.setCellValue("日期：" + date[i]);
             c0.setCellStyle(cenStyle);
-            sheet.createRow(first+1).createCell(0).setCellStyle(cenStyle);
-            sheet.addMergedRegion(new CellRangeAddress(first, first+1, 0, 11));
+            sheet.createRow(first + 1).createCell(0).setCellStyle(cenStyle);
+            sheet.addMergedRegion(new CellRangeAddress(first, first + 1, 0, 11));
 
             List<Test> tests = test.get(i);
             for (int j = 0; j < tests.size(); j++) {
@@ -318,8 +315,8 @@ public class POIUtil {
                 int end = sheet.getPhysicalNumberOfRows();
                 if (j != 0) {
                     sheet.createRow(end).createCell(0);
-                    sheet.createRow(end+1).createCell(0);
-                    sheet.addMergedRegion(new CellRangeAddress(end, end+1, 0, 11));
+                    sheet.createRow(end + 1).createCell(0);
+                    sheet.addMergedRegion(new CellRangeAddress(end, end + 1, 0, 11));
                 }
                 int begin = sheet.getPhysicalNumberOfRows();
                 Cell c1;
@@ -344,7 +341,7 @@ public class POIUtil {
                 sheet.addMergedRegion(new CellRangeAddress(begin, begin, 0, 11));
                 Row r2 = sheet.createRow(begin + 1);
                 c1 = r2.createCell(0);
-                c1.setCellValue("检测次数：第" + String.valueOf(j+1)+"次");
+                c1.setCellValue("检测次数：第" + String.valueOf(j + 1) + "次");
                 c1.setCellStyle(cellStyle);
                 r2.createCell(1).setCellStyle(cellStyle);
                 r2.createCell(2).setCellStyle(cellStyle);
@@ -440,8 +437,8 @@ public class POIUtil {
                 r6.createCell(11).setCellStyle(cellStyle);
                 sheet.addMergedRegion(new CellRangeAddress(begin + 5, begin + 5, 0, 11));
 
-                for(int count=0;count<14;count++){
-                    sheet.createRow(begin+6+count).createCell(0).setCellStyle(cellStyle);
+                for (int count = 0; count < 14; count++) {
+                    sheet.createRow(begin + 6 + count).createCell(0).setCellStyle(cellStyle);
                 }
                 sheet.addMergedRegion(new CellRangeAddress(begin + 6, begin + 19, 0, 11));
 
@@ -449,17 +446,17 @@ public class POIUtil {
                 Row row = tempSheet.createRow(0);
                 row.createCell(0).setCellValue("时间");
                 row.createCell(1).setCellValue("尿量率");
-                List<Flow>flows=flow.get(i).get(j);
-                int length=flows.size();
-                for(int k=0;k<length;k++){
-                    Flow tempFlow=flows.get(k);
-                    row=tempSheet.createRow(k+1);
+                List<Flow> flows = flow.get(i).get(j);
+                int length = flows.size();
+                for (int k = 0; k < length; k++) {
+                    Flow tempFlow = flows.get(k);
+                    row = tempSheet.createRow(k + 1);
                     row.createCell(0).setCellValue(Double.parseDouble(tempFlow.getTime()));
                     row.createCell(1).setCellValue(Double.parseDouble(tempFlow.getRate()));
                 }
                 // 八个参数，前四个表示图片离起始单元格和结束单元格边缘的位置，
                 // 后四个表示起始和结束单元格的位置，注意excel的起始位置是0
-                XSSFClientAnchor anchor = xlsx_drawing.createAnchor(0, 0, 0, 0, 0, begin+6, 12, begin+20);
+                XSSFClientAnchor anchor = xlsx_drawing.createAnchor(0, 0, 0, 0, 0, begin + 6, 12, begin + 20);
                 /* Create the chart object based on the anchor point */
                 XSSFChart line_chart = xlsx_drawing.createChart(anchor);
                 /*
@@ -480,7 +477,7 @@ public class POIUtil {
 
                 LineChartSeries series = data.addSeries(xs, ys);
                 series.setTitle("尿流曲线");//设置序列名称
-                line_chart.plot(data, new ChartAxis[] { bottomAxis, leftAxis });
+                line_chart.plot(data, new ChartAxis[]{bottomAxis, leftAxis});
                 workbook.removeSheetAt(1);
             }
         }
@@ -492,6 +489,56 @@ public class POIUtil {
             ouput.flush();
             ouput.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //导出医生账户
+    public static void exportUser(List<User> users, HttpServletResponse response) {
+        //创建一个Excel文档
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        //创建数据样式
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+        cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setWrapText(true);
+        //创建表单
+        HSSFSheet sheet = workbook.createSheet("医生账户");
+        sheet.setColumnWidth(0, 15 * 256);
+        sheet.setColumnWidth(1, 20 * 256);
+        //创建表头
+        HSSFRow r = sheet.createRow(0);
+        HSSFCell c0 = r.createCell(0);
+        c0.setCellValue("账号");
+        c0.setCellStyle(cellStyle);
+        HSSFCell c1 = r.createCell(1);
+        c1.setCellValue("密码");
+        c1.setCellStyle(cellStyle);
+        //遍历集合进行存储数据
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            HSSFRow row = sheet.createRow(i + 1);
+            HSSFCell cell;
+            cell = row.createCell(0);
+            cell.setCellValue(user.getUsername());
+            cell.setCellStyle(cellStyle);
+            cell = row.createCell(1);
+            cell.setCellValue(user.getPassword());
+            cell.setCellStyle(cellStyle);
+        }
+        try {
+            response.setHeader("Content-disposition", "attachment;fileName=" + URLEncoder.encode("医生账户.xls", "utf-8"));
+            response.setContentType("application/octet-stream;charset=utf-8");
+            OutputStream ouput = response.getOutputStream();
+            workbook.write(ouput);
+            ouput.flush();
+            ouput.close();
+        } catch (
+                IOException e) {
             e.printStackTrace();
         }
     }

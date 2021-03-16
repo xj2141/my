@@ -23,6 +23,11 @@
           </el-form-item>
           <el-form-item label="检测地点:" prop="testPlace">
             <el-input v-model="testForm.testPlace" placeholder="请输入内容" size="mini" style="width: 180px;"></el-input>
+            <span>&nbsp;&nbsp;</span>
+          </el-form-item>
+          <el-form-item label="排尿量:" prop="vv">
+            <el-input v-model.number="testForm.vv" placeholder="请输入内容" size="mini" style="width: 180px;"
+                      @change="analyzeAgain" oninput="value=value.replace(/[^\d]/g, '')"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -39,7 +44,7 @@
           :on-success="onSuccess"
           :on-error="onError"
           :disabled="importDisabled"
-          action="/file/analyze">
+          action="/file/get">
           <el-button size="small" :disabled="importDisabled" type="success" :icon="importDataIcon">
             {{ importDataText }}
           </el-button>
@@ -51,7 +56,14 @@
         <div id="myChartAdd" :style="{width: '800px', height: '400px', marginLeft:'25px'}"></div>
         <div class="title"><u>No2.参数</u></div>
         <br/>
-        <div style="text-align: center">尿量(VV)：{{ testForm.vv }}ml&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最大尿流率(Qmax)：{{ testForm.qmax }}ml/s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;尿流时间(FT)：{{ testForm.ft }}s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;达峰时间(TQmax)：{{ testForm.tqmax }}s</div>
+        <div style="text-align: center">尿量(VV)：{{ testForm.vv }}ml&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;最大尿流率(Qmax)：{{
+            testForm.qmax
+          }}ml/s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;尿流时间(FT)：{{
+            testForm.ft
+          }}s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;达峰时间(TQmax)：{{
+            testForm.tqmax
+          }}s
+        </div>
         <br/>
         <div class="title"><u>No3.结论</u></div>
         <br/>
@@ -73,10 +85,11 @@ require("echarts/lib/component/legend");
 
 export default {
   name: "FlowTestAdd",
-  props:{
-    nowTestForm:{
-      type:Object,
-      default:()=>{}
+  props: {
+    nowTestForm: {
+      type: Object,
+      default: () => {
+      }
     }
   },
   data() {
@@ -87,8 +100,8 @@ export default {
         age: ''
       },
       testForm: {
-        testId:'',
-        username:'',
+        testId: '',
+        username: '',
         testDate: '',
         testTime: '',
         testPlace: '',
@@ -100,16 +113,19 @@ export default {
         flowEndId: '',
         conclusion: ''
       },
-      flowData:[],
-      testYes:false,
+      flowData: [],
+      testYes: false,
       importDataText: '获取数据',
       importDisabled: false,
       importDataIcon: 'el-icon-upload2',
-      rules:{
+      rules: {
         testTime: [
           {required: true, message: '必填项', trigger: 'blur'}
         ],
         testPlace: [
+          {required: true, message: '必填项', trigger: 'blur'}
+        ],
+        vv: [
           {required: true, message: '必填项', trigger: 'blur'}
         ]
       },
@@ -151,6 +167,7 @@ export default {
     }
   },
   mounted() {
+    this.$message.info("获取数据前请先输入排尿量");
     let username = sessionStorage.getItem('username');
     let postData = this.qs.stringify({
       username: username
@@ -166,7 +183,7 @@ export default {
     }).catch(error => {
       console.log(error);
     });
-    this.testForm=this.nowTestForm;
+    this.testForm = this.nowTestForm;
   },
   methods: {
     //绘制曲线图
@@ -203,85 +220,109 @@ export default {
         myChart = null;
       }, 100);
     },
+    analyzeAgain() {
+      if (this.flowData.length != 0) {
+        if (this.testForm.vv=='') {
+          this.$message.warning("请先输入排尿量");
+        } else {
+          this.analyze();
+        }
+      }
+    },
+    analyze() {
+      let ids = {
+        params: this.flowData
+      };
+      let flows = JSON.stringify(ids);
+      this.axios.post('/file/analyze', {flows: flows, vv: this.testForm.vv}).then(response => {
+        let test = response.data;
+        this.testForm.qmax = test.qmax;
+        this.testForm.ft = test.ft;
+        this.testForm.tqmax = test.tqmax;
+        this.testForm.conclusion = test.conclusion;
+      }).catch(() => {
+      });
+    },
     onError() {
       this.importDataText = '获取数据';
       this.importDataIcon = 'el-icon-upload2'
       this.importDisabled = false;
       this.$message.error("获取数据失败！");
-      this.testYes=false;
+      this.testYes = false;
     },
     onSuccess(res) {
-      this.testYes=true;
+      this.testYes = true;
       //res是后端返回的值
       this.importDataText = '获取数据';
       this.importDataIcon = 'el-icon-upload2'
       this.importDisabled = false;
       this.$message.success("获取数据成功！");
-      this.flowData = res.flow;
+      console.log(res)
+      this.flowData = res;
       this.drawLineChart();
-      let test = res.test[0];
-      this.testForm.vv = test.vv;
-      this.testForm.qmax = test.qmax;
-      this.testForm.ft = test.ft;
-      this.testForm.tqmax = test.tqmax;
-      this.testForm.conclusion = test.conclusion;
+      this.analyze();
     },
     beforeUpload() {
-      this.importDataText = '正在获取';
-      this.importDisabled = true;
-      this.importDataIcon = 'el-icon-loading';
+      if (this.testForm.vv == '') {
+        this.$message.warning("请先输入排尿量");
+        return false;
+      } else {
+        this.importDataText = '正在获取';
+        this.importDisabled = true;
+        this.importDataIcon = 'el-icon-loading';
+      }
     },
-    cancel(){
-      this.testForm={
-          testId:'',
-          username:'',
-          testDate: '',
-          testTime: '',
-          testPlace: '',
-          vv: '',
-          qmax: '',
-          ft: '',
-          tqmax: '',
-          flowBeginId: '',
-          flowEndId: '',
-          conclusion: ''
+    cancel() {
+      this.testForm = {
+        testId: '',
+        username: '',
+        testDate: '',
+        testTime: '',
+        testPlace: '',
+        vv: '',
+        qmax: '',
+        ft: '',
+        tqmax: '',
+        flowBeginId: '',
+        flowEndId: '',
+        conclusion: ''
       };
-      this.flowData=[];
+      this.flowData = [];
       this.$refs.testForm.clearValidate();
     },
-    add(){
+    add() {
       this.$refs.testForm.validate(valid => {
         if (valid) {
           console.log(this.flowData.length);
-          if(this.flowData.length==0){
+          if (this.flowData.length == 0) {
             this.$message.error("无尿流率测定数据，添加失败");
-          }else{
+          } else {
             let params = {
               params: this.flowData
             };
-            let tempTest=JSON.stringify(this.testForm);
-            let count=this.flowData.length;
+            let tempTest = JSON.stringify(this.testForm);
+            let count = this.flowData.length;
             this.axios({
               method: 'post',
               url: '/tempFlowTest/insertFlow',
               data: params
-            }).then(response =>
-            {
+            }).then(response => {
               this.axios({
                 method: 'post',
                 url: '/tempFlowTest/insertTest',
-                data: {tempTest:tempTest,count:count}
+                data: {tempTest: tempTest, count: count}
               }).then(response => {
                 this.$emit("parentHandle");
-              }).catch(error => {});
+              }).catch(error => {
+              });
             }).catch(error => {
               console.log(error);
             });
           }
         } else {
           this.$message({
-            type:'error',
-            message:'星号为必填项'
+            type: 'error',
+            message: '必填项不能为空'
           });
           console.log("参数验证不合法！");
         }

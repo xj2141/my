@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header height="40px" style="text-align: right">
-      <span style="position: absolute;left:15px;top:9px;color: white">管理员系统</span>
+      <span style="position: absolute;left:15px;top:9px;color: white">医生系统</span>
       <span style="color: white">账号：{{username}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
       <el-button type="text" @click="loginOut">退出登录</el-button>
     </el-header>

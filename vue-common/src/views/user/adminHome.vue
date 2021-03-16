@@ -25,6 +25,9 @@
         <el-button type="primary" @click="forbid">禁用</el-button>
       </el-form-item>
       <el-form-item>
+        <el-button type="primary" icon="el-icon-download" @click="handleExport">导出</el-button>
+      </el-form-item>
+      <el-form-item>
         <el-button type="primary" class="el-icon-delete" @click="removeBatch()">批量删除</el-button>
       </el-form-item>
       <el-form-item>
@@ -65,9 +68,9 @@
     </div>
 
     <el-form :model="addForm" :rules="rules" ref="addForm" label-width="100px" class="demo-form" size="mini">
-      <el-dialog :append-to-body='true' :visible.sync="dialogAdd" width="380px" :before-close="handleClose">
+      <el-dialog :append-to-body='true' :visible.sync="dialogAdd" width="380px" :before-close="handleClose" center>
         <el-form-item label="账号数量" prop="number">
-          <el-input style="width: 200px" placeholder="请输入数值" v-model.number="addForm.number"></el-input>
+          <el-input style="width: 200px" placeholder="请输入数值" v-model.number="addForm.number" oninput="value=value.replace(/[^\d]/g, '')"></el-input>
         </el-form-item>
         <span slot="footer" class="dialog-footer">
           <el-button @click="cancel" size="mini">取消</el-button>
@@ -124,7 +127,6 @@ export default{
       rules: {
         number: [
           {required: true, message: '输入不能为空', trigger: 'blur'},
-          {type: 'number', message: '输入必须为数字值', trigger: 'blur'},
           {validator: checkValue, trigger: 'blur' }
         ]
       }
@@ -282,6 +284,32 @@ export default{
           return false;
         }
       });
+    },
+    handleExport() {
+      if (this.multipleSelection.length == 0) {
+        this.$message.warning("请先勾选选项");
+      } else {
+        let params = {
+          params: this.multipleSelection
+        };
+        this.axios({
+          method: 'post',
+          url: '/admin/export',
+          data: params,
+          responseType: 'blob'
+        }).then(response => {
+          const link = document.createElement('a');
+          let blob = new Blob([response.data], {type: "application/vnd.ms-excel"});
+          link.style.display = 'none';
+          link.href = URL.createObjectURL(blob);
+          link.setAttribute('download', '医生账户.xls');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }).catch(error => {
+          this.$message.success("系统数据错误！");
+        });
+      }
     }
   },
   created(){

@@ -17,8 +17,6 @@ public interface EvaluateDao {
 
     public int insert(Evaluate evaluate);
 
-    public int delete(int evaluateId);
-
     public int remove(String []id);
 
     public int update(Evaluate evaluate);

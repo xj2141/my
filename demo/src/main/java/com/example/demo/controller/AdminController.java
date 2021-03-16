@@ -8,9 +8,11 @@ import com.example.demo.service.DoctorService;
 import com.example.demo.service.PatientService;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.GenerateUtil;
+import com.example.demo.utils.POIUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +47,14 @@ public class AdminController {
     public int rows(String username,String state){
         int re=userService.getRowCount(username,state);
         return re;
+    }
+
+    @RequestMapping(value = "/export", method = RequestMethod.POST)
+    @ResponseBody
+    public void export(@RequestBody String params, HttpServletResponse response){
+        JSONObject jb = JSONObject.parseObject(params);
+        List<User> users = JSONObject.parseArray(jb.getJSONArray("params").toJSONString(), User.class);
+        POIUtil.exportUser(users,response);
     }
 
     @RequestMapping(value = "/insert", method = RequestMethod.POST)

@@ -29,10 +29,6 @@ public class EvaluateService {
         return evaluateDao.insert(evaluate);
     }
 
-    public int delete(int evaluateId){
-        return evaluateDao.delete(evaluateId);
-    }
-
     public int remove(String []id){
         return evaluateDao.remove(id);
     }
