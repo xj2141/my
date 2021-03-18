@@ -1,5 +1,6 @@
+
 <template>
-  <div class="navMenu">
+  <div>
     <template v-for="navMenu in navMenus">
       <!-- 最后一级菜单 -->
       <el-menu-item v-if="!navMenu.childs&&navMenu.entity"

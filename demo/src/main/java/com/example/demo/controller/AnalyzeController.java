@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.domain.Flow;
+import com.example.demo.domain.TempFlow;
 import com.example.demo.domain.Test;
 import com.example.demo.utils.AnalyzeUtil;
 import com.example.demo.utils.POIUtil;
@@ -23,12 +24,21 @@ public class AnalyzeController {
         JSONObject jb = JSONObject.parseObject(params);
         List<Flow> flows = JSONObject.parseArray(jb.getJSONArray("params").toJSONString(), Flow.class);
         String vv=parasmap.get("vv");
-        return AnalyzeUtil.analyze(flows,Integer.parseInt(vv));
+        String sex=parasmap.get("sex");
+        return AnalyzeUtil.analyze(flows,Integer.parseInt(vv),sex);
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     public List<Flow> get(MultipartFile file){
         List<Flow>flows= POIUtil.importFlow(file);
         return flows;
+    }
+
+    @RequestMapping(value = "/smooth", method = RequestMethod.POST)
+    public List<Flow> smooth(@RequestBody String params){
+        JSONObject jb = JSONObject.parseObject(params);
+        List<Flow> flows = JSONObject.parseArray(jb.getJSONArray("params").toJSONString(), Flow.class);
+        List<Flow> list=AnalyzeUtil.smooth(flows);
+        return list;
     }
 }

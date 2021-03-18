@@ -81,6 +81,7 @@ export default {
         testPlace: '',
         vv: '',
         qmax: '',
+        qave:'',
         ft: '',
         tqmax: '',
         flowBeginId: '',

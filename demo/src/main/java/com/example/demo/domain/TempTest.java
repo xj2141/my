@@ -9,6 +9,7 @@ public class TempTest {
     private String testPlace;
     private String vv;
     private String qmax;
+    private String qave;
     private String ft;
     private String tqmax;
     private int flowBeginId;
@@ -69,6 +70,14 @@ public class TempTest {
 
     public void setQmax(String qmax) {
         this.qmax = qmax;
+    }
+
+    public String getQave() {
+        return qave;
+    }
+
+    public void setQave(String qave) {
+        this.qave = qave;
     }
 
     public String getFt() {

@@ -16,7 +16,6 @@
       </el-form-item>
       <el-form-item style="text-align: center">
         <el-button type="primary" @click="handleSubmit">提交</el-button>
-        <el-button type="primary" @click="handleBack">返回</el-button>
       </el-form-item>
     </el-form>
     </div>
@@ -135,11 +134,6 @@ export default{
           console.log("参数验证不合法！");
           return false;
         }
-      });
-    },
-    handleBack(){
-      this.$router.push({
-        path:"/"
       });
     }
   }

@@ -12,6 +12,7 @@
         <result property="testPlace" column="testPlace"/>
         <result property="vv" column="vv"/>
         <result property="qmax" column="qmax"/>
+        <result property="qave" column="qave"/>
         <result property="ft" column="ft"/>
         <result property="tqmax" column="tqmax"/>
         <result property="flowBeginId" column="flowBeginId"/>
@@ -42,7 +43,7 @@
     </select>
 
     <insert id="insertTest" parameterType="com.example.demo.domain.TempTest">
-        insert into tempTest(username,testDate,testTime,testPlace,vv,qmax,ft,tqmax,flowBeginId,flowEndId,conclusion)
+        insert into tempTest(username,testDate,testTime,testPlace,vv,qmax,qave,ft,tqmax,flowBeginId,flowEndId,conclusion)
         values (
         #{username,jdbcType=VARCHAR},
         #{testDate,jdbcType=VARCHAR},
@@ -50,6 +51,7 @@
         #{testPlace,jdbcType=VARCHAR},
         #{vv,jdbcType=VARCHAR},
         #{qmax,jdbcType=VARCHAR},
+        #{qave,jdbcType=VARCHAR},
         #{ft,jdbcType=VARCHAR},
         #{tqmax,jdbcType=VARCHAR},
         #{flowBeginId,jdbcType=INTEGER},
@@ -60,7 +62,7 @@
 
     <update id="updateTest" parameterType="com.example.demo.domain.TempTest">
         update tempTest
-        set testTime=#{testTime},testPlace=#{testPlace},vv=#{vv},qmax=#{qmax},ft=#{ft},tqmax=#{tqmax},flowBeginId=#{flowBeginId},flowEndId=#{flowEndId},conclusion=#{conclusion}
+        set testTime=#{testTime},testPlace=#{testPlace},vv=#{vv},qmax=#{qmax},qave=#{qave},ft=#{ft},tqmax=#{tqmax},flowBeginId=#{flowBeginId},flowEndId=#{flowEndId},conclusion=#{conclusion}
         where testId=#{testId}
     </update>
 

@@ -10,7 +10,7 @@
       @close="handleClose">
       <NavMenu :navMenus="menuData"></NavMenu>
     </el-menu>
-<!--    <router-view></router-view>-->
+    <!--    <router-view></router-view>-->
   </div>
 </template>
 

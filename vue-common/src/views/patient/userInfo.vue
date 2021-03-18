@@ -12,7 +12,9 @@
         <el-input name="name" type="text" v-model="infoForm.name" placeholder="请输入姓名"></el-input>
       </el-form-item>
       <el-form-item label="性别">
-        <el-input name="sex" type="text" v-model="infoForm.sex" :disabled="true"></el-input>
+        <el-select style="width: 300px" v-model="infoForm.sex" placeholder="请选择">
+          <el-option v-for="item in items" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="年龄" prop="age">
         <el-input name="age" type="text" v-model.number="infoForm.age" placeholder="请输入年龄"></el-input>
@@ -41,7 +43,6 @@
       </el-form-item>
       <el-form-item style="text-align: center">
         <el-button type="primary" @click="handleSubmit">保存</el-button>
-        <el-button type="primary" @click="handleBack">返回</el-button>
       </el-form-item>
     </el-form>
     </div>
@@ -84,6 +85,16 @@ export default{
         phone:''
       },
       completion:0,
+      items:[
+        {
+          value:'男',
+          label:'男'
+        },
+        {
+          value:'女',
+          label:'女'
+        }
+      ],
       doctorName:'',
       doctorId:'',
       showTree:false,
@@ -189,11 +200,6 @@ export default{
           console.log("参数验证不合法！");
           return false;
         }
-      });
-    },
-    handleBack(){
-      this.$router.push({
-        path:"/"
       });
     }
   },

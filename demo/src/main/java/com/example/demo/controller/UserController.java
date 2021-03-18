@@ -64,7 +64,6 @@ public class UserController {
             Patient patient=new Patient();
             patient.setUsername(username);
             patient.setPassword(target);
-            patient.setSex("男");
             patientService.insert(patient);
             map.put("status", "success");
             map.put("msg", "注册成功");

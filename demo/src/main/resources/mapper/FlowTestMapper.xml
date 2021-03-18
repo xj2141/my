@@ -18,6 +18,7 @@
         <result property="testPlace" column="testPlace"/>
         <result property="vv" column="vv"/>
         <result property="qmax" column="qmax"/>
+        <result property="qave" column="qave"/>
         <result property="ft" column="ft"/>
         <result property="tqmax" column="tqmax"/>
         <result property="flowBeginId" column="flowBeginId"/>
@@ -71,7 +72,7 @@
     </select>
 
     <insert id="insertTest" parameterType="java.util.List">
-        insert into test(testTime,testPlace,vv,qmax,ft,tqmax,flowBeginId,flowEndId,conclusion)
+        insert into test(testTime,testPlace,vv,qmax,qave,ft,tqmax,flowBeginId,flowEndId,conclusion)
         values
         <foreach collection="list"  item="item" index="index" separator=",">
             (
@@ -79,6 +80,7 @@
             #{item.testPlace,jdbcType=VARCHAR},
             #{item.vv,jdbcType=VARCHAR},
             #{item.qmax,jdbcType=VARCHAR},
+            #{item.qave,jdbcType=VARCHAR},
             #{item.ft,jdbcType=VARCHAR},
             #{item.tqmax,jdbcType=VARCHAR},
             #{item.flowBeginId,jdbcType=INTEGER},
